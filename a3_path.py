@@ -17,4 +17,7 @@ class Agent:
     def __str__(self):
         return self.name +self.size
     def move(state, model):
+        # model一般默认为minimax
+        # 在当前函数中应该获取链表中每一个图形的桥的数量
+
         pass
