@@ -11,14 +11,10 @@ Includes a State class for Task 1
 # genet ic algorithm
 class Agent:
     def __init__(self):
-        pass
-    def genetic_algorithm(self,population,fitness_function,mutation_rate,generations):
-        pass
-    def crossover(self,parent1,parent2):
-        pass
-    def mutate(self,individual,mutation_rate):
-        pass
-    def select_parents(self,population,fitness_function):
-        pass
-    def create_initial_population(self,size):
+        self.name = "B20"
+        self.size = "m,n"
+        self.modle = ["minimax", "alphabeta"]
+    def __str__(self):
+        return self.name +self.size
+    def move(state, model):
         pass

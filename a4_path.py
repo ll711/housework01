@@ -15,5 +15,12 @@ Includes a State class for Task 1
 # show the path on the GUI and give who need to active ahead
 from a1_state import State
 from a3_path import Agent
+def play(state, agentA, agentB):
+    pass
+def tester():
+    # 测试以上所有函数
+    pass
+if __name__ == "__main__":
+    tester()
 
 

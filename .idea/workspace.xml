@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d26566cf-fd1a-43a8-a549-82e652b8e6e8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/a2_path.py" beforeDir="false" afterPath="$PROJECT_DIR$/a2_path.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/a3_path.py" beforeDir="false" afterPath="$PROJECT_DIR$/a3_path.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/a4_path.py" beforeDir="false" afterPath="$PROJECT_DIR$/a4_path.py" afterDir="false" />
     </list>
@@ -106,7 +105,7 @@
       <workItem from="1760523230036" duration="99000" />
       <workItem from="1760617043872" duration="1294000" />
       <workItem from="1760626111575" duration="1624000" />
-      <workItem from="1760634505825" duration="2279000" />
+      <workItem from="1760634505825" duration="3035000" />
     </task>
     <servers />
   </component>
@@ -114,6 +113,21 @@
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="main" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
