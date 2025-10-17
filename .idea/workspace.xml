@@ -6,12 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="d26566cf-fd1a-43a8-a549-82e652b8e6e8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyList.py" beforeDir="false" afterPath="$PROJECT_DIR$/MyList.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/a1_state.py" beforeDir="false" afterPath="$PROJECT_DIR$/a1_state.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/a3_path.py" beforeDir="false" afterPath="$PROJECT_DIR$/a3_agent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/a4_path.py" beforeDir="false" afterPath="$PROJECT_DIR$/a4_game.py" afterDir="false" />
     </list>
     <list id="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" name="Changes by Administrator" comment="">
+      <change beforePath="$PROJECT_DIR$/Test_for_bfs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Test_for_bfs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/a2_path.py" beforeDir="false" afterPath="$PROJECT_DIR$/a2_path.py" afterDir="false" />
     </list>
     <list id="a83569da-aeba-4720-9907-eec82fdec353" name="Changes by lenovo" comment="">
@@ -48,18 +46,19 @@
   <component name="LineStatusTrackerManager">
     <file path="$PROJECT_DIR$/a1_state.py">
       <ranges>
-        <range start1="13" end1="14" start2="13" end2="15" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="33" end1="34" start2="34" end2="34" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="46" end1="47" start2="46" end2="47" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
-        <range start1="50" end1="66" start2="50" end2="51" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="74" end1="75" start2="59" end2="60" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="113" end1="114" start2="98" end2="98" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
-        <range start1="204" end1="205" start2="188" end2="293" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="208" end1="225" start2="296" end2="301" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="226" end1="249" start2="302" end2="302" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
-        <range start1="250" end1="282" start2="303" end2="303" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
-        <range start1="290" end1="304" start2="311" end2="311" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
-        <range start1="308" end1="308" start2="315" end2="316" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
+        <range start1="195" end1="199" start2="195" end2="197" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
+        <range start1="211" end1="215" start2="209" end2="212" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
+        <range start1="216" end1="221" start2="213" end2="216" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
+        <range start1="222" end1="227" start2="217" end2="222" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
+        <range start1="228" end1="238" start2="223" end2="233" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
+        <range start1="239" end1="257" start2="234" end2="252" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
+        <range start1="258" end1="268" start2="253" end2="263" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
+        <range start1="269" end1="280" start2="264" end2="275" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
+        <range start1="281" end1="284" start2="276" end2="279" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
+        <range start1="285" end1="288" start2="280" end2="283" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
+        <range start1="291" end1="303" start2="286" end2="286" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
+        <range start1="305" end1="310" start2="288" end2="295" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
+        <range start1="319" end1="320" start2="304" end2="305" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
       </ranges>
     </file>
   </component>
@@ -167,7 +166,7 @@
       <workItem from="1760638039983" duration="651000" />
       <workItem from="1760707221847" duration="1162000" />
       <workItem from="1760713471509" duration="800000" />
-      <workItem from="1760716287539" duration="14838000" />
+      <workItem from="1760716287539" duration="18768000" />
     </task>
     <servers />
   </component>
@@ -224,7 +223,7 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/housework01$a1_state.coverage" NAME="a1_state Coverage Results" MODIFIED="1760718360211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$.coverage" NAME=" Coverage Results" MODIFIED="1760727510098" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/housework01$Test_for_bfs.coverage" NAME="Test_for_bfs Coverage Results" MODIFIED="1760731300719" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/housework01$Test_for_bfs.coverage" NAME="Test_for_bfs Coverage Results" MODIFIED="1760733651958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$MyList.coverage" NAME="MyList Coverage Results" MODIFIED="1760466793718" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$loaddatas.coverage" NAME="loaddatas 覆盖结果" MODIFIED="1760105043894" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>

@@ -193,10 +193,8 @@ class State:
         """
         current_node = self.mylist.head
         while current_node is not None:
-            min_x, max_x = current_node.get_min_x(), current_node.get_max_x()
-            min_y, max_y = current_node.get_min_y(), current_node.get_max_y()
-
-            if min_x <= row <= max_x and min_y <= col <= max_y:
+            # 检查坐标是否在节点的活跃坐标集合中
+            if (row, col) in current_node.get_active_coords_set():  # 假设有这个方法
                 return current_node
             current_node = current_node.next
         return None
@@ -209,105 +207,92 @@ class State:
         # 创建临时数组存储当前节点的桥梁坐标
         node_tinger_coords = []
 
-        # Placeholder for bridge checking logic
-        # 检查桥梁状态的占位函数
-        min_x, max_x = node.get_min_x(), node.get_max_x()
-        min_y, max_y = node.get_min_y(), node.get_max_y()
+        # 获取节点中存储的所有非零坐标（活跃区域坐标）
+        # 假设节点有一个get_active_coords()方法返回所有非零坐标
+        active_coords = node.get_active_coords()
 
-        for i in range(min_x, max_x + 1):
-            for j in range(min_y, max_y + 1):
-                # 只检查非零单元格（活跃区域）
-                if self.result[i][j] == 0:
-                    continue
+        # 遍历节点中的所有活跃坐标
+        for coord in active_coords:
+            i, j = coord  # 解包坐标
 
-                # 检查直接相邻的左右和上下方向
-                directions = [
-                    [(0, -1), (0, 1)],  # 左右方向（同一行）
-                    [(-1, 0), (1, 0)]  # 上下方向（同一列）
-                ]
+            # 检查直接相邻的左右和上下方向
+            directions = [
+                [(0, -1), (0, 1)],  # 左右方向（同一行）
+                [(-1, 0), (1, 0)]  # 上下方向（同一列）
+            ]
 
-                is_hinger = False
-                for dir_pair in directions:
-                    zero_count = 0
-                    # 检查该方向上的两个相邻格子
-                    for dr, dc in dir_pair:
-                        r_adj, c_adj = i + dr, j + dc
-                        # 确保坐标在全局网格边界内
+            is_hinger = False
+            for dir_pair in directions:
+                zero_count = 0
+                # 检查该方向上的两个相邻格子
+                for dr, dc in dir_pair:
+                    r_adj, c_adj = i + dr, j + dc
+                    # 确保坐标在全局网格边界内
+                    if 0 <= r_adj < self.m and 0 <= c_adj < self.n:
+                        if self.result[r_adj][c_adj] == 0:
+                             zero_count += 1
+
+                # 如果同一行/列有两个相邻零格子，则当前点为桥梁
+                if zero_count >= 2:
+                    is_hinger = True
+                    break
+            # 额外检查1：如果周围邻居数少于等于1，则不是桥梁
+            # 额外检查2：如果被标记为桥梁，检查周围非零点是否全部连通
+            if is_hinger:
+                # 收集周围八个方向的非零点（摩尔邻居）
+                neighbors = []
+                for dr in [-1, 0, 1]:
+                    for dc in [-1, 0, 1]:
+                        if dr == 0 and dc == 0:
+                            continue  # 跳过自身
+                        r_adj = i + dr
+                        c_adj = j + dc
                         if 0 <= r_adj < self.m and 0 <= c_adj < self.n:
-                            if self.result[r_adj][c_adj] == 0:
-                                zero_count += 1
+                            if self.result[r_adj][c_adj] > 0:
+                                neighbors.append((r_adj, c_adj))
 
-                    # 如果同一行/列有两个相邻零格子，则当前点为桥梁
-                    if zero_count >= 2:
-                        is_hinger = True
-                        break
-                # 额外检查1：如果周围邻居数少于等于1，则不是桥梁
-                # 额外检查2：如果被标记为桥梁，检查周围非零点是否全部连通
-                if is_hinger:
-                    # 收集周围八个方向的非零点（摩尔邻居）
-                    neighbors = []
-                    for dr in [-1, 0, 1]:
-                        for dc in [-1, 0, 1]:
-                            if dr == 0 and dc == 0:
-                                continue  # 跳过自身
-                            r_adj = i + dr
-                            c_adj = j + dc
-                            if 0 <= r_adj < self.m and 0 <= c_adj < self.n:
-                                if self.result[r_adj][c_adj] > 0:
-                                    neighbors.append((r_adj, c_adj))
+                # 检查1：如果邻居数少于等于1，则不是桥梁
+                if len(neighbors) <= 1:
+                    is_hinger = False
+                # 检查2：如果周围有非零点，检查它们是否全部连通（四连通）
+                elif len(neighbors) > 1:
+                    visited = set()
+                    queue = collections.deque()
+                    start = neighbors[0]
+                    queue.append(start)
+                    visited.add(start)
 
-                    # 检查1：如果邻居数少于等于1，则不是桥梁
-                    if len(neighbors) <= 1:
+                    # 使用BFS检查连通性
+                    while queue:
+                        r, c = queue.popleft()
+                        # 检查四方向（上下左右）
+                        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                            nr, nc = r + dr, c + dc
+                            neighbor_pos = (nr, nc)
+                            if (neighbor_pos in neighbors and
+                                neighbor_pos not in visited):
+                                visited.add(neighbor_pos)
+                                queue.append(neighbor_pos)
+
+                    # 如果所有邻居点都连通，则不是桥梁
+                    if len(visited) == len(neighbors):
                         is_hinger = False
-                    # 检查2：如果周围有非零点，检查它们是否全部连通（四连通）
-                    elif len(neighbors) > 1:
-                        visited = set()
-                        queue = collections.deque()
-                        start = neighbors[0]
-                        queue.append(start)
-                        visited.add(start)
 
-                        # 使用BFS检查连通性
-                        while queue:
-                            r, c = queue.popleft()
-                            # 检查四方向（上下左右）
-                            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                                nr, nc = r + dr, c + dc
-                                neighbor_pos = (nr, nc)
-                                if (neighbor_pos in neighbors and
-                                    neighbor_pos not in visited):
-                                    visited.add(neighbor_pos)
-                                    queue.append(neighbor_pos)
-
-                        # 如果所有邻居点都连通，则不是桥梁
-                        if len(visited) == len(neighbors):
-                            is_hinger = False
-
-                if is_hinger:
-                    # 添加到临时数组，使用全局坐标(i, j)
-                    node_tinger_coords.append((i, j))
+            if is_hinger:
+                # 添加到临时数组，使用全局坐标(i, j)
+                node_tinger_coords.append((i, j))
 
         #返回当前节点的桥梁坐标数组
         return node_tinger_coords
 
-    def Node_Hinger_Number(self):
-        """
-        检查桥梁状态，优化版：第一次遍历所有节点，后续只遍历受影响的节点
-        """
-        """
-        优化搜索逻辑，只搜索受影响节点（即活跃区域）
-        """
-
-
-
-
-
     def numHingers(self):
-        """
-        返回当前桥梁数量
-        如果需要更新，先调用IS_Hinger方法
-        """
-        return self.tinger_count
+
+        num = 0
+        current_node = self.mylist.head
+        while current_node is not None:
+            num += len(self.IS_Hinger(current_node))
+            current_node = current_node.next
+        return num
 
     def numRegions(self):
         # Placeholder for returning number of regions
@@ -317,7 +302,7 @@ class State:
     def moves(self):
         # Placeholder for returning possible moves
         # 返回可能移动的占位函数
-        return []
+        pass
 
 def tester():
     import tkinter as tk
