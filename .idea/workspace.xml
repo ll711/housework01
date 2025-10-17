@@ -6,15 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="d26566cf-fd1a-43a8-a549-82e652b8e6e8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/a1_state.py" beforeDir="false" afterPath="$PROJECT_DIR$/a1_state.py" afterDir="false" />
     </list>
-    <list id="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" name="Changes by Administrator" comment="">
-      <change beforePath="$PROJECT_DIR$/Test_for_bfs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Test_for_bfs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/a2_path.py" beforeDir="false" afterPath="$PROJECT_DIR$/a2_path.py" afterDir="false" />
-    </list>
-    <list id="a83569da-aeba-4720-9907-eec82fdec353" name="Changes by lenovo" comment="">
-      <change beforePath="$PROJECT_DIR$/a1_state.py" beforeDir="false" afterPath="$PROJECT_DIR$/a1_state.py" afterDir="false" />
-    </list>
+    <list id="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" name="Changes by Administrator" comment="" />
     <list id="d19837c7-ebba-441a-a468-f289eb119283" name="lenovo 进行的更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,25 +36,6 @@
     &quot;accountId&quot;: &quot;dcaca28b-c708-4445-9317-2f70cb9fc255&quot;
   }
 }</component>
-  <component name="LineStatusTrackerManager">
-    <file path="$PROJECT_DIR$/a1_state.py">
-      <ranges>
-        <range start1="195" end1="199" start2="195" end2="197" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="211" end1="215" start2="209" end2="212" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="216" end1="221" start2="213" end2="216" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="222" end1="227" start2="217" end2="222" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="228" end1="238" start2="223" end2="233" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="239" end1="257" start2="234" end2="252" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="258" end1="268" start2="253" end2="263" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="269" end1="280" start2="264" end2="275" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="281" end1="284" start2="276" end2="279" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="285" end1="288" start2="280" end2="283" changelist="a83569da-aeba-4720-9907-eec82fdec353" />
-        <range start1="291" end1="303" start2="286" end2="286" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
-        <range start1="305" end1="310" start2="288" end2="295" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
-        <range start1="319" end1="320" start2="304" end2="305" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
-      </ranges>
-    </file>
-  </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -166,7 +140,7 @@
       <workItem from="1760638039983" duration="651000" />
       <workItem from="1760707221847" duration="1162000" />
       <workItem from="1760713471509" duration="800000" />
-      <workItem from="1760716287539" duration="18768000" />
+      <workItem from="1760716287539" duration="20045000" />
     </task>
     <servers />
   </component>
