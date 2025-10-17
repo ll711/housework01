@@ -14,7 +14,7 @@ Includes a State class for Task 1
 #in the GUI, show a star path, and import the path from a3 file
 # show the path on the GUI and give who need to active ahead
 from a1_state import State
-from a3_path import Agent
+from a3_agent import Agent
 def play(state, agentA, agentB):
     # main game loop
     #其中游戏开始的时候用户应该选择是人机对战还是机器对战

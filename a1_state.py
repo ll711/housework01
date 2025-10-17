@@ -11,7 +11,8 @@ Includes a State class for Task 1
 
 """
 import tkinter as tk
-from MyList import MyList  # Keep dependency on MyList
+from MyList import MyList  # Keep dependency
+import collections # 需要导入collections模块用于BFS
 # 保持对 MyList 的依赖
 
 class State:
@@ -31,7 +32,6 @@ class State:
             graph_num=1
         )
 
-        self.tinger_coords = []  # 存储所有桥梁坐标
         self.tinger_count = 0  # 桥梁数量
         self.first_check = True  # 是否是第一次检查
         self.affected_nodes = set()  # 受影响的节点集合
@@ -44,26 +44,11 @@ class State:
 
         # 如果提供了行列信息，找到对应的节点并标记为受影响
         if row is not None and col is not None:
-            node = self.find_node_by_coord(row, col)
+            node = self.Search_Node(row, col)
             if node is not None:
                 self.affected_nodes.add(node)
                 # 同时修改数据
-                self.change_data(row, col)
-
-    def find_node_by_coord(self, row, col):
-        """
-        根据坐标找到对应的链表节点
-        每个节点代表一个活跃区域，有特定的坐标范围
-        """
-        current_node = self.mylist.head
-        while current_node is not None:
-            min_x, max_x = current_node.get_min_x(), current_node.get_max_x()
-            min_y, max_y = current_node.get_min_y(), current_node.get_max_y()
-
-            if min_x <= row <= max_x and min_y <= col <= max_y:
-                return current_node
-            current_node = current_node.next
-        return None
+                self.Change_Data(row, col)
 
     def Change_Data(self, row, col):
         """
@@ -72,7 +57,7 @@ class State:
         只修改鼠标点击位置所在的区域节点内的数据
         """
         # 找到包含该坐标的节点
-        node = self.find_node_by_coord(row, col)
+        node = self.Search_Node(row, col)
         if node is None:
             # 如果找不到对应节点，可能是点击了非活跃区域
             print(f"警告: 坐标({row}, {col})不在任何活跃区域内")
@@ -111,7 +96,6 @@ class State:
             return False
 
     def Get_Graph(self):
-        # 不修改 self.result，使用 visited 避免重复
         graph = self.result
         grid = [[0] * self.n for _ in range(self.m)]
         visited = [[False] * self.n for _ in range(self.m)]
@@ -202,49 +186,31 @@ class State:
                     for cc in range(self.n):
                         grid[rr][cc] = 0
 
-    def IS_Hinger(self):
+    def Search_Node(self, row, col):
         """
-        检查桥梁状态，优化版：第一次遍历所有节点，后续只遍历受影响的节点
+        根据坐标找到对应的链表节点
+        每个节点代表一个活跃区域，有特定的坐标范围
         """
-        if self.first_check:
-            # 第一次调用，遍历所有节点
-            self.tinger_coords = []
-            current_node = self.mylist.head
-            while current_node is not None:
-                self._check_node_for_hinger(current_node)
-                current_node = current_node.next
-            self.first_check = False
-        else:
-            # 后续调用，只遍历受影响的节点
-            for node in self.affected_nodes:
-                # 移除该节点范围内之前记录的桥梁坐标
-                self._remove_tinger_in_node(node)
-                # 重新检查该节点内的桥梁状态
-                self._check_node_for_hinger(node)
-            # 清空受影响节点集合，为下一次准备
-            self.affected_nodes.clear()
+        current_node = self.mylist.head
+        while current_node is not None:
+            min_x, max_x = current_node.get_min_x(), current_node.get_max_x()
+            min_y, max_y = current_node.get_min_y(), current_node.get_max_y()
 
-        # 更新桥梁数量
-        self.tinger_count = len(self.tinger_coords)
-        return self.tinger_count > 0
+            if min_x <= row <= max_x and min_y <= col <= max_y:
+                return current_node
+            current_node = current_node.next
+        return None
 
-    def _remove_tinger_in_node(self, node):
+    def IS_Hinger(self, node):
         """
-        移除指定节点范围内的所有桥梁坐标记录
+        检查指定节点的桥梁状态，增加周围非零点四联通性检查
+        仅返回当前节点桥梁坐标信息
         """
-        min_x, max_x = node.get_min_x(), node.get_max_x()
-        min_y, max_y = node.get_min_y(), node.get_max_y()
+        # 创建临时数组存储当前节点的桥梁坐标
+        node_tinger_coords = []
 
-        # 过滤掉在节点范围内的坐标
-        self.tinger_coords = [
-            coord for coord in self.tinger_coords
-            if not (min_x <= coord[0] <= max_x and min_y <= coord[1] <= max_y)
-        ]
-
-    def _check_node_for_hinger(self, node):
-        """
-        检查指定节点内的所有坐标，判断是否为桥梁
-        """
+        # Placeholder for bridge checking logic
+        # 检查桥梁状态的占位函数
         min_x, max_x = node.get_min_x(), node.get_max_x()
         min_y, max_y = node.get_min_y(), node.get_max_y()
 
@@ -275,11 +241,66 @@ class State:
                     if zero_count >= 2:
                         is_hinger = True
                         break
+                # 额外检查1：如果周围邻居数少于等于1，则不是桥梁
+                # 额外检查2：如果被标记为桥梁，检查周围非零点是否全部连通
+                if is_hinger:
+                    # 收集周围八个方向的非零点（摩尔邻居）
+                    neighbors = []
+                    for dr in [-1, 0, 1]:
+                        for dc in [-1, 0, 1]:
+                            if dr == 0 and dc == 0:
+                                continue  # 跳过自身
+                            r_adj = i + dr
+                            c_adj = j + dc
+                            if 0 <= r_adj < self.m and 0 <= c_adj < self.n:
+                                if self.result[r_adj][c_adj] > 0:
+                                    neighbors.append((r_adj, c_adj))
+
+                    # 检查1：如果邻居数少于等于1，则不是桥梁
+                    if len(neighbors) <= 1:
+                        is_hinger = False
+                    # 检查2：如果周围有非零点，检查它们是否全部连通（四连通）
+                    elif len(neighbors) > 1:
+                        visited = set()
+                        queue = collections.deque()
+                        start = neighbors[0]
+                        queue.append(start)
+                        visited.add(start)
+
+                        # 使用BFS检查连通性
+                        while queue:
+                            r, c = queue.popleft()
+                            # 检查四方向（上下左右）
+                            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                                nr, nc = r + dr, c + dc
+                                neighbor_pos = (nr, nc)
+                                if (neighbor_pos in neighbors and
+                                    neighbor_pos not in visited):
+                                    visited.add(neighbor_pos)
+                                    queue.append(neighbor_pos)
+
+                        # 如果所有邻居点都连通，则不是桥梁
+                        if len(visited) == len(neighbors):
+                            is_hinger = False
 
                 if is_hinger:
-                    # 避免重复添加
-                    if (i, j) not in self.tinger_coords:
-                        self.tinger_coords.append((i, j))
+                    # 添加到临时数组，使用全局坐标(i, j)
+                    node_tinger_coords.append((i, j))
+
+        #返回当前节点的桥梁坐标数组
+        return node_tinger_coords
+
+    def Node_Hinger_Number(self):
+        """
+        检查桥梁状态，优化版：第一次遍历所有节点，后续只遍历受影响的节点
+        """
+        """
+        优化搜索逻辑，只搜索受影响节点（即活跃区域）
+        """
+
+
+
+
 
     def numHingers(self):
         """
@@ -289,23 +310,10 @@ class State:
         return self.tinger_count
 
     def numRegions(self):
-        """
-        计算并返回活跃区域的数量（即链表中的节点数量）
-        """
-        count = 0
-        current_node = self.mylist.head
-
-        # 遍历链表统计节点数量
-        while current_node is not None:
-            count += 1
-            current_node = current_node.next
-
-        return count
-
-    def numRegions(self):
         # Placeholder for returning number of regions
         # 返回活跃区域数量的占位函数
         return len(self.mylist)
+
     def moves(self):
         # Placeholder for returning possible moves
         # 返回可能移动的占位函数
