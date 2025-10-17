@@ -4,7 +4,7 @@ Coursework 001 for: CMP-6058A Artificial Intelligence
 
 Includes a State class for Task 1
 
-@author: B20 (100528137 and 100531086)
+@author: B20 (100528137 and 100531086 and 100331080)
 @date: 11/10/2025
 
 """
@@ -15,6 +15,7 @@ def path_BFS(start,end):
     # 这个项目的BFS通过list将每一个图形放到每一个节点上
     #其中list的max,min是标注每个图形的大致范围
     #在这个算法中应该填入每个链表中安全路径的变化即list1,list2,list3中的第一个并以此类推
+    
     return None
 def path_DFS(start, end):
     # 这个项目的BFS通过list将每一个图形放到每一个节点上

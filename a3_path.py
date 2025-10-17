@@ -4,7 +4,7 @@ Coursework 001 for: CMP-6058A Artificial Intelligence
 
 Includes a State class for Task 1
 
-@author: B20 (100528137 and 100531086)
+@author: B20 (100528137 and 100531086 and 100331080)
 @date: 11/10/2025
 
 """
