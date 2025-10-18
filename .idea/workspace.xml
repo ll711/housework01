@@ -6,9 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="d26566cf-fd1a-43a8-a549-82e652b8e6e8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyList.py" beforeDir="false" afterPath="$PROJECT_DIR$/MyList.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/a2_path.py" beforeDir="false" afterPath="$PROJECT_DIR$/a2_path.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/a3_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/a3_agent.py" afterDir="false" />
     </list>
-    <list id="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" name="Changes by Administrator" comment="" />
+    <list id="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" name="Changes by Administrator" comment="">
+      <change beforePath="$PROJECT_DIR$/Test_for_bfs.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/a2_path.py" beforeDir="false" afterPath="$PROJECT_DIR$/a2_path.py" afterDir="false" />
+    </list>
+    <list id="0955489a-8a89-482f-a27b-2881fbc58f71" name="Changes by lenovo" comment="">
+      <change beforePath="$PROJECT_DIR$/a1_state.py" beforeDir="false" afterPath="$PROJECT_DIR$/a1_state.py" afterDir="false" />
+    </list>
     <list id="d19837c7-ebba-441a-a468-f289eb119283" name="lenovo 进行的更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +45,33 @@
     &quot;accountId&quot;: &quot;dcaca28b-c708-4445-9317-2f70cb9fc255&quot;
   }
 }</component>
+  <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/a2_path.py">
+      <ranges>
+        <range start1="12" end1="13" start2="12" end2="13" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="14" end1="19" start2="14" end2="16" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="20" end1="28" start2="17" end2="17" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="29" end1="30" start2="18" end2="19" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="33" end1="59" start2="22" end2="30" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="60" end1="152" start2="31" end2="41" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="153" end1="155" start2="42" end2="44" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="156" end1="164" start2="45" end2="51" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="165" end1="166" start2="52" end2="53" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="172" end1="197" start2="59" end2="64" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
+        <range start1="198" end1="278" start2="65" end2="70" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
+        <range start1="279" end1="284" start2="71" end2="72" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
+        <range start1="287" end1="295" start2="75" end2="79" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
+        <range start1="296" end1="309" start2="80" end2="81" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
+        <range start1="314" end1="316" start2="86" end2="113" changelist="d26566cf-fd1a-43a8-a549-82e652b8e6e8" />
+        <range start1="322" end1="322" start2="119" end2="153" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="323" end1="324" start2="154" end2="155" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="326" end1="327" start2="157" end2="206" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="330" end1="331" start2="209" end2="228" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="334" end1="337" start2="231" end2="250" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+        <range start1="342" end1="343" start2="255" end2="260" changelist="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" />
+      </ranges>
+    </file>
+  </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -48,28 +83,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Python tests.Python tests in test.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MyList.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Test_for_bfs.executor&quot;: &quot;Run&quot;,
-    &quot;Python.a1_state.executor&quot;: &quot;Run&quot;,
-    &quot;Python.loaddatas.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/w/Desktop/aihousework/housework01&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python tests.Python tests in test.py.executor": "Run",
+    "Python.MyList.executor": "Run",
+    "Python.Test_for_bfs.executor": "Run",
+    "Python.a1_state.executor": "Run",
+    "Python.a2_path.executor": "Run",
+    "Python.loaddatas.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/w/Desktop/aihousework/housework01",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="Test_for_bfs" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="housework01" />
@@ -94,8 +130,32 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="a2_path" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="housework01" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/a2_path.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.a2_path" />
         <item itemvalue="Python.Test_for_bfs" />
       </list>
     </recent_temporary>
@@ -143,6 +203,8 @@
       <workItem from="1760713471509" duration="800000" />
       <workItem from="1760716287539" duration="20045000" />
       <workItem from="1760739042127" duration="672000" />
+      <workItem from="1760792282251" duration="834000" />
+      <workItem from="1760795417476" duration="11395000" />
     </task>
     <servers />
   </component>
@@ -199,8 +261,9 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/housework01$a1_state.coverage" NAME="a1_state Coverage Results" MODIFIED="1760718360211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$.coverage" NAME=" Coverage Results" MODIFIED="1760727510098" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/housework01$Test_for_bfs.coverage" NAME="Test_for_bfs Coverage Results" MODIFIED="1760733651958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/housework01$Test_for_bfs.coverage" NAME="Test_for_bfs Coverage Results" MODIFIED="1760799699454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$MyList.coverage" NAME="MyList Coverage Results" MODIFIED="1760466793718" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$loaddatas.coverage" NAME="loaddatas 覆盖结果" MODIFIED="1760105043894" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/housework01$a2_path.coverage" NAME="a2_path Coverage Results" MODIFIED="1760801852979" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

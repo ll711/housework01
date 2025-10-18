@@ -69,42 +69,62 @@ class Grid2D:
 class ListNode:
     # Singly-linked list node that carries a grid and metadata
     # 携带网格与元数据的单向链表节点
-    min_x: int                       # Inclusive min x-bound
-    max_x: int                       # Inclusive max x-bound
-    min_y: int                       # Inclusive min y-bound
-    max_y: int                       # Inclusive max y-bound
-    grid: Grid2D                     # Payload grid
-    bridge_num: int = 0              # Bridge count metadata
-    graph_num: int = 0               # Graph id/count metadata
-    next: Optional["ListNode"] = None  # Next node pointer
+    min_x: int
+    max_x: int
+    min_y: int
+    max_y: int
+    grid: Grid2D
+    bridge_num: int = 0
+    graph_num: int = 0
+    next: Optional["ListNode"] = None
+    array_data: Optional[List[List[int]]] = None  # 原始二维数组数据（可选）
 
-    # getters
-    # 取值器
-    def get_min_x(self) -> int: return self.min_x
-    def get_max_x(self) -> int: return self.max_x
-    def get_min_y(self) -> int: return self.min_y
-    def get_max_y(self) -> int: return self.max_y
-    def get_bridge_num(self) -> int: return self.bridge_num
-    def get_graph_num(self) -> int: return self.graph_num
-    def get_grid(self) -> Grid2D: return self.grid
+    def __post_init__(self) -> None:
+        # 若提供了 array_data，则以其初始化 grid；否则根据 grid.shape 初始化 m*n 值为 0 的数组
+        if self.array_data is not None:
+            self.grid = Grid2D(self.array_data)
+        else:
+            rows, cols = self.grid.shape
+            if rows == 0 or cols == 0:
+                self.array_data = []
+            else:
+                self.array_data = [[0 for _ in range(cols)] for _ in range(rows)]
 
-    # setters
-    # 设值器
-    def set_min_x(self, v: int) -> None: self.min_x = v
-    def set_max_x(self, v: int) -> None: self.max_x = v
-    def set_min_y(self, v: int) -> None: self.min_y = v
-    def set_max_y(self, v: int) -> None: self.max_y = v
-    def set_bridge_num(self, v: int) -> None: self.bridge_num = v
-    def set_graph_num(self, v: int) -> None: self.graph_num = v
-
+    def get_min_x(self) -> int:
+        return self.min_x
+    def get_max_x(self) -> int:
+        return self.max_x
+    def get_min_y(self) -> int:
+        return self.min_y
+    def get_max_y(self) -> int:
+        return self.max_y
+    def get_bridge_num(self) -> int:
+        return self.bridge_num
+    def get_graph_num(self) -> int:
+        return self.graph_num
+    def get_grid(self) -> Grid2D:
+        return self.grid
+    def get_array_data(self) -> List[List[int]]:
+        # 返回 array_data 的深拷贝
+        return [row[:] for row in self.array_data] if self.array_data else []
+    def set_min_x(self, v: int) -> None:
+        self.min_x = v
+    def set_max_x(self, v: int) -> None:
+        self.max_x = v
+    def set_min_y(self, v: int) -> None:
+        self.min_y = v
+    def set_max_y(self, v: int) -> None:
+        self.max_y = v
+    def set_bridge_num(self, v: int) -> None:
+        self.bridge_num = v
+    def set_graph_num(self, v: int) -> None:
+        self.graph_num = v
     def set_grid_data(self, data: List[List[int]]) -> None:
-        # Replace payload grid with new data wrapped as Grid2D
-        # 用新的二维数组数据替换负载网格，并封装为 Grid2D
+        # 更新 grid 与 array_data 保持一致
         self.grid = Grid2D(data)
+        self.array_data = [row[:] for row in data]
 
     def __repr__(self) -> str:
-        # Compact debug string with bounds and grid shape
-        # 包含边界与网格尺寸的紧凑调试字符串
         r, c = self.grid.shape
         return (f"ListNode(min_x={self.min_x}, max_x={self.max_x}, "
                 f"min_y={self.min_y}, max_y={self.max_y}, "
