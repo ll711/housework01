@@ -13,6 +13,11 @@ Includes a State class for Task 1
 # run(matichine VS machine, human VS machine)
 #in the GUI, show a star path, and import the path from a3 file
 # show the path on the GUI and give who need to active ahead
+"""
+这个环节就是搭积木的环节
+把所有做好的模块全部放入其中
+并最终完成交付
+"""
 from a1_state import State
 from a3_agent import Agent
 def play(state, agentA, agentB):

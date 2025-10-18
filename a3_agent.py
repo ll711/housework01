@@ -30,7 +30,9 @@ class Agent:
         """
         pass
     def evaluate(self,state):
+        """
 
+        """
         pass
     def MiniMax(self):
         """
@@ -44,5 +46,6 @@ class Agent:
         剪枝算法应该经过evaluate函数进行评估
         寻找最优路径
         对于minmax进行剪枝
+
         """
         pass

@@ -294,8 +294,8 @@ class State:
                     for dc in [-1, 0, 1]:
                         if dr == 0 and dc == 0:
                             continue  # 跳过自身
-                        r_adj = i + dr
-                        c_adj = j + dc
+                        r_adj = i_global + dr
+                        c_adj = j_global + dc
                         if 0 <= r_adj < self.m and 0 <= c_adj < self.n:
                             if self.result[r_adj][c_adj] > 0:
                                 neighbors.append((r_adj, c_adj))
@@ -328,11 +328,11 @@ class State:
                         is_hinger = False
 
             if is_hinger:
-                # 添加到临时数组，使用全局坐标(i, j)
-                node_tinger_coords.append((i, j))
+                # 添加到临时数组，使用全局坐标(i, j)同体系的二维数组坐标(i_global, j_global)
+                node_tinger_global_coords.append((i_global, j_global))
 
         #返回当前节点的桥梁坐标数组
-        return node_tinger_coords
+        return node_tinger_global_coords
 
     def numHingers(self):
 
