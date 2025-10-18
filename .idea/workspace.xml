@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d26566cf-fd1a-43a8-a549-82e652b8e6e8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/a3_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/a3_agent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/a4_game.py" beforeDir="false" afterPath="$PROJECT_DIR$/a4_game.py" afterDir="false" />
-    </list>
+    <list default="true" id="d26566cf-fd1a-43a8-a549-82e652b8e6e8" name="Changes" comment="" />
     <list id="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" name="Changes by Administrator" comment="" />
-    <list id="0955489a-8a89-482f-a27b-2881fbc58f71" name="Changes by lenovo" comment="">
-      <change beforePath="$PROJECT_DIR$/a1_state.py" beforeDir="false" afterPath="$PROJECT_DIR$/a1_state.py" afterDir="false" />
-    </list>
+    <list id="0955489a-8a89-482f-a27b-2881fbc58f71" name="Changes by lenovo" comment="" />
     <list id="d19837c7-ebba-441a-a468-f289eb119283" name="lenovo 进行的更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -173,7 +167,7 @@
       <workItem from="1760716287539" duration="20045000" />
       <workItem from="1760739042127" duration="672000" />
       <workItem from="1760792282251" duration="834000" />
-      <workItem from="1760795417476" duration="12343000" />
+      <workItem from="1760795417476" duration="12501000" />
     </task>
     <servers />
   </component>
