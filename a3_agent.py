@@ -39,6 +39,9 @@ class Agent:
         max所有可能的情况
         min应该计算到达这个情况的最小化的步骤
         即一个搜索算法为一个策略
+        min后面应该紧接着出现max即只有的所有可能
+        在是一个min即最小化步骤
+        并以此循环直到终点
         """
         pass
     def AlphaBeta(self):
@@ -46,6 +49,5 @@ class Agent:
         剪枝算法应该经过evaluate函数进行评估
         寻找最优路径
         对于minmax进行剪枝
-
         """
         pass

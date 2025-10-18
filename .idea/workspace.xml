@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d26566cf-fd1a-43a8-a549-82e652b8e6e8" name="Changes" comment="" />
+    <list default="true" id="d26566cf-fd1a-43a8-a549-82e652b8e6e8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/a3_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/a3_agent.py" afterDir="false" />
+    </list>
     <list id="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" name="Changes by Administrator" comment="" />
     <list id="0955489a-8a89-482f-a27b-2881fbc58f71" name="Changes by lenovo" comment="" />
     <list id="d19837c7-ebba-441a-a468-f289eb119283" name="lenovo 进行的更改" comment="" />
@@ -46,30 +49,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python tests.Python tests in test.py.executor": "Run",
-    "Python.MyList.executor": "Run",
-    "Python.Test_for_bfs.executor": "Run",
-    "Python.a1_state.executor": "Run",
-    "Python.a2_path.executor": "Run",
-    "Python.loaddatas.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/w/Desktop/aihousework/housework01",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests in test.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MyList.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Test_for_bfs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.a1_state.executor&quot;: &quot;Run&quot;,
+    &quot;Python.a2_path.executor&quot;: &quot;Run&quot;,
+    &quot;Python.loaddatas.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/w/Desktop/aihousework/housework01&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager">
+}</component>
+  <component name="RunManager" selected="Python.a2_path">
     <configuration name="Test_for_bfs" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="housework01" />
       <option name="ENV_FILES" value="" />
@@ -168,6 +171,7 @@
       <workItem from="1760739042127" duration="672000" />
       <workItem from="1760792282251" duration="834000" />
       <workItem from="1760795417476" duration="12501000" />
+      <workItem from="1760829141116" duration="101000" />
     </task>
     <servers />
   </component>
