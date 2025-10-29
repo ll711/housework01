@@ -57,34 +57,57 @@ class State:
                 # 同时修改数据
                 self.Change_Data(row, col)
 
-    def Moves(self, row, col):
+    def Moves(self, row: int, col: int) -> bool:
         """
-        修改指定坐标位置的数字，减一操作
+        修改指定鼠标点击坐标位置的数字，减一操作
         不对零进行操作，仅判断，由a4的win函数判断
-        :param row: 行坐标
-        :param col: 列坐标
+        :param row: 全局网格地行坐标
+        :param col: 全局网格的列坐标
         如果已经是零，则保持不变
-        :return: 修改成功返回True，否则不修改
-        只修改鼠标点击位置所在的区域节点内的数据
+        :return: 修改成功返回True，否则返回False
+        只修改鼠标点击位置所在的区域节点内的数据（现交由Change_Date修改）
         """
-        # 找到包含该坐标的节点
+
+        # 检查当前格内计数器数字是否为零
+        if self.result[row][col] == 0:
+            print(f"坐标({row}, {col})的值已经是零，不进行操作")
+            return False
+
+        # 通过鼠标坐标找到包含该坐标的节点
         node = self.Search_Node(row, col)
         if node is None:
             # 如果找不到对应节点，可能是点击了非活跃区域
             print(f"警告: 坐标({row}, {col})不在任何活跃区域内")
             return False
 
+    def Change_Data(self, row: int, col: int, node) -> bool:
+        """
+        修改指定坐标位置的数字，减一操作
+        :param row: 行坐标（全局）
+        :param col: 列坐标（全局）
+        :param node: 包含该坐标的节点
+        :return: 修改成功返回True，否则返回False
+        只修改鼠标点击位置所在的区域节点内的数据
+        """
+        # 获取节点的边界信息
+        min_x, max_x = node.get_min_x(), node.get_max_x()  # 列的范围
+        min_y, max_y = node.get_min_y(), node.get_max_y()  # 行的范围
+
         # 获取节点的网格数据
         node_grid = node.get_grid().data
 
-        # 将节点局部坐标转换为全局坐标
-        node_min_x, node_min_y = node.get_min_x(), node.get_min_y()
-        local_row = row - node_min_x
-        local_col = col - node_min_y
+        # 计算节点网格的尺寸（包含周围一圈空白）
+        node_rows = len(node_grid)
+        node_cols = len(node_grid[0]) if node_rows > 0 else 0
+
+        # 将全局坐标转换为节点局部坐标
+        # 节点网格的(0,0)对应全局的(min_y-1, min_x-1)
+        local_row = row - (min_y - 1)
+        local_col = col - (min_x - 1)
 
         # 确保局部坐标在节点网格范围内
-        if (0 <= local_row < len(node_grid) and
-                0 <= local_col < len(node_grid[0])):
+        if (0 <= local_row < node_rows and
+                0 <= local_col < node_cols):
 
             # 获取当前值
             current_value = node_grid[local_row][local_col]
@@ -104,6 +127,8 @@ class State:
                 return False
         else:
             print(f"错误: 局部坐标({local_row}, {local_col})超出节点网格范围")
+            print(f"节点边界: min_y={min_y}, max_y={max_y}, min_x={min_x}, max_x={max_x}")
+            print(f"节点网格尺寸: {node_rows} x {node_cols}")
             return False
 
     def Get_Graph(self):
@@ -186,6 +211,22 @@ class State:
                     head_node.set_graph_num(1)
                     used_head = True
                 else:
+                    # 检查是否存在相同图形（比较边界与二维数组内容）
+                    is_dup = False
+                    for node in self.mylist:
+                        if (node.get_min_x() == mincol and node.get_max_x() == maxcol and
+                                node.get_min_y() == minrow and node.get_max_y() == maxrow and
+                                node.get_grid().data == subgrid):
+                            is_dup = True
+                            break
+
+                    # 不重复则尾插，重复则跳过
+                    if not is_dup:
+                        last_graph_num = self.mylist.tail.get_graph_num() if self.mylist.tail else 0
+                        self.mylist.append(
+                            mincol, maxcol, minrow, maxrow,
+                            subgrid, bridge_num=0, graph_num=last_graph_num + 1
+                        )
                     last_graph_num = self.mylist.tail.get_graph_num() if self.mylist.tail else 0
                     self.mylist.append(
                         mincol, maxcol, minrow, maxrow,
@@ -221,7 +262,7 @@ class State:
             current_node = current_node.next
         return None
 
-    def IS_Hinger(self, node):
+    def May_Hinger(self, node):
         """
         检查指定节点的桥梁状态
         1.增加周围非零点四联通性检查
@@ -288,7 +329,7 @@ class State:
 
             # 额外检查1：如果周围邻居数少于等于1，则不是桥梁
             # 额外检查2：如果被标记为桥梁，检查周围非零点是否全部连通
-            if is_hinger:
+            if may_hinger:
                 # 收集周围八个方向的非零点（摩尔邻居）
                 neighbors = []
                 for dr in [-1, 0, 1]:
@@ -328,7 +369,7 @@ class State:
                     if len(visited) == len(neighbors):
                         is_hinger = False
 
-            if is_hinger:
+            if may_hinger:
                 # 添加到临时数组，使用全局坐标(i, j)同体系的二维数组坐标(i_global, j_global)
                 node_tinger_global_coords.append((i_global, j_global))
 
