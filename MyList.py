@@ -77,7 +77,7 @@ class ListNode:
     bridge_num: int = 0
     graph_num: int = 0
     next: Optional["ListNode"] = None
-    array_data: Optional[List[List[int]]] = None  # 原始二维数组数据（可选）
+    array_data: Optional[List[List[int]]] = None #可能的hinter
 
     def __post_init__(self) -> None:
         # 若提供了 array_data，则以其初始化 grid；否则根据 grid.shape 初始化 m*n 值为 0 的数组
