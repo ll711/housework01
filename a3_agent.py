@@ -24,26 +24,33 @@ class Agent:
         self.model = ["minimax", "alphabeta"]
     def __str__(self):
         return self.name +self.size
-    def move(self, st: state, model: str = "minimax") -> Optional[Coord]:
-        # model一般默认为minimax
-        # 在当前函数中应该获取链表中每一个图形的桥的数量
-        """
-        在minimax模式中
-        建出来的树其中应该有两个孩子一个是桥一个是非桥
-        在桥的情况下应该判断是否为dangerous还是safe
-        并以此进行评估
-        评估函数应该包含桥的数量以及桥的类型（区域中的桥）
-        在非桥的情况下应该评估当前区域的奇偶数还有可能产生may_bridge
-        """
-        m = (model or "minimax").lower()
-        if m in ("alphabeta", "alpha-beta", "alpha", "ab"):
-            _, mv = self.AlphaBeta(
-                st, depth=3, alpha=float("-inf"), beta=float("inf"), maximizing_player=True
-            )
-            return mv
-        # 默认使用 minimax
-        _, mv = self.MiniMax(st, depth=3, maximizing_player=True)
-        return mv
+    def move(self, state: state, mode: str = "alphabeta") -> Optional[Coord]:
+        grid = getattr(state, "result", None)
+        if not grid:
+            return None
+        fallback_moves = [(r, c)
+                          for r, row in enumerate(grid)
+                          for c, v in enumerate(row) if v > 0]
+        if not fallback_moves:
+            return None
+
+        m = (self.model or "alphabeta").lower()
+        try:
+            if m in ("alphabeta", "alpha-beta", "alpha", "ab"):
+                _, mv = self.AlphaBeta(
+                    state, depth=3, alpha=float("-inf"), beta=float("inf"), maximizing_player=True
+                )
+            elif m in ("minimax", "mini", "mm"):
+                _, mv = self.MiniMax(state, depth=3, maximizing_player=True)
+            else:
+                # 未知策略名时默认使用 alphabeta
+                _, mv = self.AlphaBeta(
+                    state, depth=3, alpha=float("-inf"), beta=float("inf"), maximizing_player=True
+                )
+            return mv if mv is not None else fallback_moves[0]
+        except Exception:
+            # 搜索异常时回退到首个合法坐标
+            return fallback_moves[0]
     def evaluate(self, st: state) -> float:
         """
         state = minimax模式下
@@ -337,8 +344,12 @@ class Agent:
 
         # 不返回任何值，结果已存储在节点的array_data中
 
+    def decision_tree(self):
+        pass
+
     def MCTS(self):
         pass
+
 def teser():
     """
     在几组小网格上测试 MiniMax 与 AlphaBeta 的返回分数与推荐落子。

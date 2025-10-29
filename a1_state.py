@@ -265,7 +265,7 @@ class State:
     def IS_Hinger(self, node=None, full_scan=False):
         """
         判断真正桥梁并更新全局真桥坐标列表
-        使用局部坐标遍历，仅在需要时转换为全局坐标
+        所有检查操作完全在节点局部坐标中进行，仅在确认后转换为全局坐标
         :param node: 可选，指定要检查的节点（用于增量更新）
         :param full_scan: 是否进行全量扫描（首次调用时设置为True）
         :return: 更新后的全局真桥坐标列表
@@ -275,65 +275,77 @@ class State:
             self.true_hinger_global_coords = []
             current_node = self.mylist.head
             while current_node is not None:
-                self._process_node_true_hingers(current_node)
+                self._process_node_true_hingers_local(current_node)
                 current_node = current_node.next
         elif node is not None:
             # 增量更新：只处理指定节点
             self._remove_node_hingers_from_global(node)
-            self._process_node_true_hingers(node)
+            self._process_node_true_hingers_local(node)
 
         return self.true_hinger_global_coords
 
-    def _process_node_true_hingers(self, node):
+    def _process_node_true_hingers_local(self, node):
         """
-        处理单个节点的真正桥梁判断，使用局部坐标
+        在局部坐标空间中处理单个节点的真正桥梁判断
+        所有操作使用节点局部坐标，避免任何越界检查
         """
-        # 获取节点边界信息（用于坐标转换）
+        # 获取节点边界信息（用于最后的坐标转换）
         min_x, max_x = node.get_min_x(), node.get_max_x()
         min_y, max_y = node.get_min_y(), node.get_max_y()
 
+        # 获取节点的网格数据（局部坐标）
+        node_grid = node.get_grid().data
+        node_rows = len(node_grid)
+        node_cols = len(node_grid[0]) if node_rows > 0 else 0
+
         # 获取May_Hinger标记的潜在桥梁（局部坐标）
         array_data = node.get_array_data()
-        node_grid = node.get_grid().data
-
-        node_rows = len(array_data)
-        node_cols = len(array_data[0]) if node_rows > 0 else 0
 
         # 遍历节点中的潜在桥梁位置（使用局部坐标）
         for i_local in range(node_rows):
             for j_local in range(node_cols):
                 if array_data[i_local][j_local] == 1:  # 潜在桥梁位置
-                    # 将局部坐标转换为全局坐标
-                    i_global = min_y - 1 + i_local
-                    j_global = min_x - 1 + j_local
+                    # 在局部坐标空间中检查是否为真正桥梁
+                    if self._check_hinger_creates_new_region_local(node, i_local, j_local):
+                        # 如果是真正桥梁，将局部坐标转换为全局坐标
+                        i_global = min_y - 1 + i_local
+                        j_global = min_x - 1 + j_local
 
-                    # 确保全局坐标有效
-                    if not (0 <= i_global < self.m and 0 <= j_global < self.n):
-                        continue
+                        # 确保全局坐标有效
+                        if (0 <= i_global < self.m and 0 <= j_global < self.n):
+                            # 添加到全局真桥列表
+                            if (i_global, j_global) not in self.true_hinger_global_coords:
+                                self.true_hinger_global_coords.append((i_global, j_global))
 
-                    # 检查移除该桥梁是否会导致区域分裂（使用全局坐标）
-                    if self._check_hinger_creates_new_region(node, i_global, j_global):
-                        # 如果是真正桥梁，添加到全局列表
-                        if (i_global, j_global) not in self.true_hinger_global_coords:
-                            self.true_hinger_global_coords.append((i_global, j_global))
-
-    def _check_hinger_creates_new_region(self, node, i_global, j_global):
+    def _check_hinger_creates_new_region_local(self, node, i_local, j_local):
         """
-        检查移除指定桥梁是否会产生新的活跃区域
-        使用BFS算法，基于全局坐标但限制在节点范围内
+        在局部坐标空间中检查移除指定桥梁是否会产生新的活跃区域
+        使用BFS算法，完全在节点局部网格内操作
         """
-        # 模拟移除该桥梁
-        original_value = self.result[i_global][j_global]
-        self.result[i_global][j_global] = 0
+        # 获取节点的局部网格数据
+        node_grid = node.get_grid().data
+        node_rows = len(node_grid)
+        node_cols = len(node_grid[0]) if node_rows > 0 else 0
 
-        # 获取节点范围内的所有活跃单元格（使用全局坐标但限制在节点边界内）
-        active_cells = self._get_active_cells_in_node(node)
+        # 创建网格副本用于模拟操作
+        grid_copy = [row[:] for row in node_grid]
 
+        # 模拟移除该桥梁（在局部网格中临时设置为0）
+        original_value = grid_copy[i_local][j_local]
+        grid_copy[i_local][j_local] = 0
+
+        # 获取节点局部网格中的所有活跃单元格
+        active_cells = set()
+        for i in range(node_rows):
+            for j in range(node_cols):
+                if grid_copy[i][j] > 0:
+                    active_cells.add((i, j))
+
+        # 如果没有活跃单元格，不会产生新区域
         if not active_cells:
-            self.result[i_global][j_global] = original_value
             return False
 
-        # 使用BFS检查连通组件数量
+        # 使用BFS检查连通组件数量（在局部坐标中）
         visited = set()
         region_count = 0
 
@@ -341,13 +353,16 @@ class State:
             if cell not in visited:
                 region_count += 1
                 if region_count > 1:
+                    # 如果已经找到多于一个区域，提前终止
                     break
 
+                # BFS遍历当前区域
                 queue = collections.deque([cell])
                 visited.add(cell)
 
                 while queue:
                     r, c = queue.popleft()
+                    # 检查八个方向（摩尔邻居）
                     for dr in [-1, 0, 1]:
                         for dc in [-1, 0, 1]:
                             if dr == 0 and dc == 0:
@@ -355,45 +370,19 @@ class State:
                             nr, nc = r + dr, c + dc
                             neighbor = (nr, nc)
 
-                            # 检查是否在节点范围内且是活跃单元格
-                            if (neighbor in active_cells and
-                                    neighbor not in visited):
+                            # 确保邻居在节点网格范围内且是活跃单元格
+                            if (0 <= nr < node_rows and 0 <= nc < node_cols and
+                                    grid_copy[nr][nc] > 0 and neighbor not in visited):
                                 visited.add(neighbor)
                                 queue.append(neighbor)
 
-        # 恢复原始值
-        self.result[i_global][j_global] = original_value
-
+        # 如果区域数量大于1，表示会产生新区域
         return region_count > 1
-
-    def _get_active_cells_in_node(self, node):
-        """
-        获取节点范围内的所有活跃单元格（全局坐标）
-        但限制在节点的实际边界内，避免越界
-        """
-        min_x, max_x = node.get_min_x(), node.get_max_x()
-        min_y, max_y = node.get_min_y(), node.get_max_y()
-
-        active_cells = set()
-
-        # 计算节点在全局网格中的实际范围（包括周围一圈空白）
-        global_min_row = min_y - 1
-        global_max_row = max_y + 1
-        global_min_col = min_x - 1
-        global_max_col = max_x + 1
-
-        # 遍历节点在全局网格中的范围
-        for i in range(global_min_row, global_max_row + 1):
-            for j in range(global_min_col, global_max_col + 1):
-                if (0 <= i < self.m and 0 <= j < self.n and
-                        self.result[i][j] > 0):
-                    active_cells.add((i, j))
-
-        return active_cells
 
     def _remove_node_hingers_from_global(self, node):
         """
         从全局真桥列表中移除指定节点范围内的所有桥梁
+        基于节点边界信息进行过滤
         """
         min_x, max_x = node.get_min_x(), node.get_max_x()
         min_y, max_y = node.get_min_y(), node.get_max_y()
@@ -412,22 +401,20 @@ class State:
         ]
 
     def numHingers(self):
-        num = 0
-        current_node = self.mylist.head
-        while current_node is not None:
-            num += len(self.IS_Hinger(current_node))
-            current_node = current_node.next
-        return num
+        """
+        直接读取全局真桥坐标列表的长度来统计桥梁数量
+        更新self.hinger_count并返回当前桥梁数量
+        """
+        # 获取全局真桥坐标列表的长度
+        self.hinger_count = len(self.true_hinger_global_coords)
+
+        # 返回桥梁数量
+        return self.hinger_count
 
     def numRegions(self):
         # Placeholder for returning number of regions
         # 返回活跃区域数量的占位函数
         return len(self.mylist)
-
-    def moves(self):
-        # Placeholder for returning possible moves
-        # 返回可能移动的占位函数
-        pass
 
 def tester():
 
