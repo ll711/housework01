@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d26566cf-fd1a-43a8-a549-82e652b8e6e8" name="Changes" comment="" />
-    <list id="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" name="Changes by Administrator" comment="" />
-    <list id="45348a14-ada0-4b8c-957c-61c32c3ded31" name="Changes by lenovo" comment="" />
+    <list default="true" id="d26566cf-fd1a-43a8-a549-82e652b8e6e8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <list id="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" name="Changes by Administrator" comment="">
+      <change beforePath="$PROJECT_DIR$/a4_game.py" beforeDir="false" afterPath="$PROJECT_DIR$/a4_game.py" afterDir="false" />
+    </list>
     <list id="d19837c7-ebba-441a-a468-f289eb119283" name="lenovo 进行的更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -177,7 +180,7 @@
       <workItem from="1761569227933" duration="105000" />
       <workItem from="1761570245664" duration="640000" />
       <workItem from="1761655536236" duration="674000" />
-      <workItem from="1761735269632" duration="33190000" />
+      <workItem from="1761735269632" duration="36033000" />
     </task>
     <servers />
   </component>
@@ -254,7 +257,7 @@
     <SUITE FILE_PATH="coverage/housework01$a1_state.coverage" NAME="a1_state Coverage Results" MODIFIED="1760718360211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$.coverage" NAME=" Coverage Results" MODIFIED="1760727510098" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$Test_for_bfs.coverage" NAME="Test_for_bfs Coverage Results" MODIFIED="1760799699454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/housework01$a4_game.coverage" NAME="a4_game Coverage Results" MODIFIED="1761773772592" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/housework01$a4_game.coverage" NAME="a4_game Coverage Results" MODIFIED="1761778463656" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$MyList.coverage" NAME="MyList Coverage Results" MODIFIED="1760466793718" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$loaddatas.coverage" NAME="loaddatas 覆盖结果" MODIFIED="1760105043894" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$a2_path.coverage" NAME="a2_path Coverage Results" MODIFIED="1760801852979" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

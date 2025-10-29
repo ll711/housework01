@@ -33,7 +33,6 @@ PAD  = 14
 
 ALGO_NAMES = ["A*", "BFS", "DFS", "IDDFS","MiniMax", "AlphaBeta"]
 
-
 # ---------- 小工具：用 a2_path 跑路径 ----------
 def run_algo(name: str, start: Coord, end: Coord) -> Optional[List[Coord]]:
     if name == "A*":

@@ -12,7 +12,6 @@ Includes a State class for Task 1
 import collections
 
 from typing import List, Tuple, Optional
-from a1_state import State as state
 from MyList import MyList as mylist
 
 Coord = Tuple[int, int]

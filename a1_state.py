@@ -13,7 +13,6 @@ Includes a State class for Task 1
 import tkinter as tk
 import collections
 from MyList import MyList
-from a3_agent import Agent as agent
 
 # 保持对 MyList 的依赖
 
