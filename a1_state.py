@@ -57,13 +57,14 @@ class State:
                 # 同时修改数据
                 self.Change_Data(row, col)
 
-    def Change_Data(self, row, col):
+    def Moves(self, row, col):
         """
         修改指定坐标位置的数字，减一操作
+        不对零进行操作，仅判断，由a4的win函数判断
         :param row: 行坐标
         :param col: 列坐标
         如果已经是零，则保持不变
-        :return: 修改成功返回True，否则返回False
+        :return: 修改成功返回True，否则不修改
         只修改鼠标点击位置所在的区域节点内的数据
         """
         # 找到包含该坐标的节点
@@ -354,7 +355,6 @@ class State:
         pass
 
 def tester():
-    import tkinter as tk
 
     m = int(input("enter rows m: "))
     n = int(input("enter columns n: "))

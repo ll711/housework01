@@ -13,7 +13,7 @@ class Agent:
     def __init__(self):
         self.name = "B20"
         self.size = "m,n"
-        self.modle = ["minimax", "alphabeta"]
+        self.model = ["minimax", "alphabeta"]
     def __str__(self):
         return self.name +self.size
     def move(state, model):
@@ -21,27 +21,28 @@ class Agent:
         # 在当前函数中应该获取链表中每一个图形的桥的数量
         """
         在minimax模式中
-        max是所有可能的情况（包含安全和危险路径）
-        min应该计算到达这个情况的最小化的步骤
-        即一个搜索算法为一个策略
-        通过evaluate函数推测最佳路径
-        并移动
-        同理适用于alphabeta算法
+        建出来的树其中应该有两个孩子一个是桥一个是非桥
+        在桥的情况下应该判断是否为dangerous还是safe
+        并以此进行评估
+        评估函数应该包含桥的数量以及桥的类型（区域中的桥）
+        在非桥的情况下应该评估当前区域的奇偶数还有安全路径的数量
         """
         pass
     def evaluate(self,state):
         """
-
+        在判断出在一个区域下真桥的数量为1的时候视为safe
+        反之应该视为dangerous
+        在非桥的情况下应该判断当前区域的安全路径下的奇偶数 其中边缘应该>内部
+        优先级应该为一个区域下真桥的数量为1(即可能产生新的区域)>非桥区域的奇偶数>safe>dangerous
         """
         pass
     def MiniMax(self):
         """
-        max所有可能的情况
-        min应该计算到达这个情况的最小化的步骤
-        即一个搜索算法为一个策略
-        min后面应该紧接着出现max即只有的所有可能
-        在是一个min即最小化步骤
-        并以此循环直到终点
+        建出来的树其中应该有两个孩子一个是桥一个是非桥
+        在桥的情况下应该判断是否为dangerous还是safe
+        并以此进行评估
+        评估函数应该包含桥的数量以及桥的类型（区域中的桥）
+        在非桥的情况下应该评估当前区域的奇偶数还有安全路径的数量
         """
         pass
     def AlphaBeta(self):
@@ -50,4 +51,6 @@ class Agent:
         寻找最优路径
         对于minmax进行剪枝
         """
+        pass
+    def MCTS(self):
         pass
