@@ -8,8 +8,15 @@ Includes a State class for Task 1
 @date: 11/10/2025
 
 """
-import collections # 需要导入collections模块用于BFS
 # genet ic algorithm
+import collections
+
+from typing import List, Tuple, Optional
+from a1_state import State as state
+from MyList import MyList as mylist
+
+Coord = Tuple[int, int]
+
 class Agent:
     def __init__(self):
         self.name = "B20"
@@ -17,7 +24,7 @@ class Agent:
         self.model = ["minimax", "alphabeta"]
     def __str__(self):
         return self.name +self.size
-    def move(state, model):
+    def move(self, st: state, model: str = "minimax") -> Optional[Coord]:
         # model一般默认为minimax
         # 在当前函数中应该获取链表中每一个图形的桥的数量
         """
@@ -28,16 +35,73 @@ class Agent:
         评估函数应该包含桥的数量以及桥的类型（区域中的桥）
         在非桥的情况下应该评估当前区域的奇偶数还有可能产生may_bridge
         """
-        pass
-    def evaluate(self,state):
+        m = (model or "minimax").lower()
+        if m in ("alphabeta", "alpha-beta", "alpha", "ab"):
+            _, mv = self.AlphaBeta(
+                st, depth=3, alpha=float("-inf"), beta=float("inf"), maximizing_player=True
+            )
+            return mv
+        # 默认使用 minimax
+        _, mv = self.MiniMax(st, depth=3, maximizing_player=True)
+        return mv
+    def evaluate(self, st: state) -> float:
         """
+        state = minimax模式下
         在判断出在一个区域下bridge的时候视为safe
-        反之如果为may_bridge应该视为dangerous
+        反之如果为May_Higher应该视为dangerous
         在非桥的情况下应该判断当前区域的安全路径下的奇偶数 其中边缘应该>内部
-        优先级应该为一个区域下bridge>安全路径的数量>可能产生桥的数量>may_bridge
+        其中桥的定义是两个区域的链接
+        higher指的是两个区域中只有一个桥
+        优先级应该为一个区域下Higher>不会产生桥>可能产生桥>可能产生Higher
+        sate = alphabeta模式下
+        思路大体是上面的其中通过搜索将may_hinger和可能产生桥的剪掉
         """
-        pass
-    def MiniMax(self):
+        grid = st.result
+        rows = len(grid)
+        cols = len(grid[0]) if rows else 0
+
+        total_sum = 0
+        edge_pos = 0
+        may_hingers = 0
+        bridge_like = 0
+
+        for r in range(rows):
+            for c in range(cols):
+                v = grid[r][c]
+                if v <= 0:
+                    continue
+                total_sum += v
+                if r == 0 or c == 0 or r == rows - 1 or c == cols - 1:
+                    edge_pos += 1
+                if v == 1:
+                    # 估计 may_hinger（左右两侧皆 0 或上下两侧皆 0，且 8 邻域活邻>=2）
+                    lr_zeros = (1 if c - 1 >= 0 and grid[r][c - 1] == 0 else 0) + \
+                               (1 if c + 1 < cols and grid[r][c + 1] == 0 else 0)
+                    ud_zeros = (1 if r - 1 >= 0 and grid[r - 1][c] == 0 else 0) + \
+                               (1 if r + 1 < rows and grid[r + 1][c] == 0 else 0)
+                    deg8 = self._deg8(grid, r, c)
+                    if (lr_zeros == 2 or ud_zeros == 2) and deg8 >= 2:
+                        may_hingers += 1
+                    # 估计“桥倾向”：左右各至少有一个活邻，或上下各至少一个活邻
+                    has_left = any(c2 < c and grid[r][c2] > 0 for c2 in range(max(0, c - 1), c))
+                    has_right = any(c2 > c and grid[r][c2] > 0 for c2 in range(c + 1, min(cols, c + 2)))
+                    has_up = any(r2 < r and grid[r2][c] > 0 for r2 in range(max(0, r - 1), r))
+                    has_down = any(r2 > r and grid[r2][c] > 0 for r2 in range(r + 1, min(rows, r + 2)))
+                    if (has_left and has_right) or (has_up and has_down):
+                        bridge_like += 1
+
+        regions = self._count_regions8(grid)
+
+        # 评分加权（可按需要微调）
+        score = (
+                + 5.0 * bridge_like  # 桥更安全
+                - 3.0 * may_hingers  # may_hinger 更危险
+                + 1.0 * regions  # 区域更多更有利（分裂对手、提高机动性）
+                + 0.5 * edge_pos  # 边界更优于内部
+                - 0.1 * total_sum  # 剩余越少越接近终局
+        )
+        return score
+    def MiniMax(self, st: state, depth: int = 2, maximizing_player: bool = True) -> Tuple[float, Optional[Coord]]:
         """
         建出来的树其中应该有两个孩子一个是桥一个是非桥
         在桥的情况下应该判断是否为may_bridge还是bridge
@@ -45,127 +109,415 @@ class Agent:
         评估函数应该包含桥的数量以及桥的类型（区域中的桥）
         在非桥的情况下应该评估当前区域安全路径的数量已经可能产生桥的路径
         """
-        pass
-    def AlphaBeta(self):
+        moves = self._legal_moves(st)
+        if depth == 0 or not moves:
+            return self.evaluate(st), None
+
+        if maximizing_player:
+            best_val = float('-inf')
+            best_move = None
+            for mv in moves:
+                child = self._clone_with_move(st, mv)
+                val, _ = self.MiniMax(child, depth - 1, False)
+                if val > best_val:
+                    best_val = val
+                    best_move = mv
+            return best_val, best_move
+        else:
+            best_val = float('inf')
+            best_move = None
+            for mv in moves:
+                child = self._clone_with_move(st, mv)
+                val, _ = self.MiniMax(child, depth - 1, True)
+                if val < best_val:
+                    best_val = val
+                    best_move = mv
+            return best_val, best_move
+    def AlphaBeta(self,
+        st: state,
+        depth: int,
+        alpha: float,
+        beta: float,
+        maximizing_player: bool = True
+    ) -> Tuple[float, Optional[Coord]]:
         """
         剪枝算法应该经过evaluate函数进行评估
         寻找最优路径
         对于minmax进行剪枝
         """
-        pass
+        moves = self._legal_moves(st)
+        if depth == 0 or not moves:
+            return self.evaluate(st), None
 
-    def May_Hinger(self, node):
-        """
-        检查指定节点的桥梁状态
-        1.增加周围非零点四联通性检查
-        2.增加仅对计数器数值为1的单元格进行桥梁判断
-        仅返回当前节点桥梁坐标信息
-        """
-        # 获取节点的边界信息
-        min_x, max_x = node.get_min_x(), node.get_max_x()
-        min_y, max_y = node.get_min_y(), node.get_max_y()
+        if maximizing_player:
+            best_val = float('-inf')
+            best_move = None
+            for mv in moves:
+                child = self._clone_with_move(st, mv)
+                val, _ = self.AlphaBeta(child, depth - 1, alpha, beta, False)
+                if val > best_val:
+                    best_val = val
+                    best_move = mv
+                alpha = max(alpha, best_val)
+                if beta <= alpha:
+                    break  # beta 剪枝
+            return best_val, best_move
+        else:
+            best_val = float('inf')
+            best_move = None
+            for mv in moves:
+                child = self._clone_with_move(st, mv)
+                val, _ = self.AlphaBeta(child, depth - 1, alpha, beta, True)
+                if val < best_val:
+                    best_val = val
+                    best_move = mv
+                beta = min(beta, best_val)
+                if beta <= alpha:
+                    break  # alpha 剪枝
+            return best_val, best_move
 
-        # 获取节点的二维数组数据（局部坐标）
+        # ========= 辅助：生成落子、克隆走子、连通性与邻域 =========
+
+    def _legal_moves(self, st: state) -> List[Coord]:
+        g = st.result
+        moves: List[Coord] = []
+        for r in range(len(g)):
+            for c in range(len(g[0]) if g else 0):
+                if g[r][c] > 0:
+                    moves.append((r, c))
+
+        # 简单启发排序：优先考虑桥倾向、再考虑边界
+        def key(mv: Coord):
+            r, c = mv
+            bridge_bias = 1 if g[r][c] == 1 and self._deg8(g, r, c) >= 2 else 0
+            edge_bias = 1 if r in (0, len(g) - 1) or c in (0, len(g[0]) - 1) else 0
+            return (bridge_bias, edge_bias, -g[r][c])
+
+        moves.sort(key=key, reverse=True)
+        return moves
+
+    def _clone_with_move(self, st: state, mv: Coord) -> state:
+        r, c = mv
+        new_grid = [row[:] for row in st.result]
+        if new_grid[r][c] > 0:
+            new_grid[r][c] -= 1
+        child = state(new_grid)
+        child.Get_Graph()
+        return child
+
+    def _count_regions8(self, grid: List[List[int]]) -> int:
+        if not grid or not grid[0]:
+            return 0
+        rows, cols = len(grid), len(grid[0])
+        vis = [[False] * cols for _ in range(rows)]
+        dirs = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+
+        def bfs(sr: int, sc: int):
+            from collections import deque
+            q = deque([(sr, sc)])
+            vis[sr][sc] = True
+            while q:
+                r, c = q.popleft()
+                for dr, dc in dirs:
+                    nr, nc = r + dr, c + dc
+                    if 0 <= nr < rows and 0 <= nc < cols and not vis[nr][nc] and grid[nr][nc] > 0:
+                        vis[nr][nc] = True
+                        q.append((nr, nc))
+
+        cnt = 0
+        for r in range(rows):
+            for c in range(cols):
+                if grid[r][c] > 0 and not vis[r][c]:
+                    cnt += 1
+                    bfs(r, c)
+        return cnt
+
+    def _deg8(self, grid: List[List[int]], r: int, c: int) -> int:
+        rows, cols = len(grid), len(grid[0]) if grid else 0
+        deg = 0
+        for dr in (-1, 0, 1):
+            for dc in (-1, 0, 1):
+                if dr == 0 and dc == 0:
+                    continue
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] > 0:
+                    deg += 1
+        return deg
+
+    def May_Hinger(self, node=None, full_scan=False):
+        """
+        检查潜在桥梁状态，使用局部坐标遍历，仅在需要时转换为全局坐标
+        :param node: 可选，指定要检查的节点（用于增量更新）
+        :param full_scan: 是否进行全量扫描（首次调用时设置为True）
+        """
+        if full_scan:
+            # 首次调用：遍历所有节点
+            current_node = self.mylist.head
+            while current_node is not None:
+                self._process_node_may_hinger(current_node)
+                current_node = current_node.next
+        elif node is not None:
+            # 增量更新：只处理指定节点
+            self._process_node_may_hinger(node)
+
+    def _process_node_may_hinger(self, node):
+        """
+        处理单个节点的潜在桥梁检测，使用局部坐标
+        """
+        # 获取节点的网格数据（局部坐标）
         node_grid = node.get_grid().data
 
-        # 计算节点网格的尺寸（包含周围一圈空白）
+        # 获取节点网格尺寸
         node_rows = len(node_grid)
         node_cols = len(node_grid[0]) if node_rows > 0 else 0
 
-        # 创建临时列表存储当前节点的桥梁全局坐标
-        node_tinger_global_coords = []
+        # 获取或初始化array_data
+        array_data = node.get_array_data()
+        if not array_data:
+            array_data = [[0] * node_cols for _ in range(node_rows)]
 
-        # 遍历节点二维数组中的所有单元格（局部坐标）
+        # 清空之前的潜在桥梁标记
+        for i in range(node_rows):
+            for j in range(node_cols):
+                array_data[i][j] = 0
+
+        # 使用局部坐标遍历节点网格
         for i_local in range(node_rows):
             for j_local in range(node_cols):
-                # 只检查非零单元格（活跃区域）
+                # 只检查非零单元格
                 if node_grid[i_local][j_local] == 0:
                     continue
 
-                # 将局部坐标转换为全局坐标
-                # 节点网格的(0,0)对应全局的(min_x-1, min_y-1)
-                # 因为节点网格包含周围一圈空白
-                i_global = min_x - 1 + i_local
-                j_global = min_y - 1 + j_local
-
-                # 确保转换后的全局坐标在有效范围内
-                if not (0 <= i_global < self.m and 0 <= j_global < self.n):
+                # 只检查计数器值为1的单元格
+                if node_grid[i_local][j_local] != 1:
                     continue
 
-                # 新增检查：只对有计数器值为1的单元格才进行桥梁判断
-                if self.result[i_global][j_global] != 1:
-                    continue  # 跳过计数器值不为1的单元格
-
-                # 检查直接相邻的左右和上下方向（使用全局坐标）
+                # 检查直接相邻的左右和上下方向（使用局部坐标）
                 directions = [
-                    [(0, -1), (0, 1)],  # 左右方向（同一行）
-                    [(-1, 0), (1, 0)]  # 上下方向（同一列）
+                    [(0, -1), (0, 1)],  # 左右方向
+                    [(-1, 0), (1, 0)]  # 上下方向
                 ]
 
-                may_hinger = False
+                may_be_hinger = False
                 for dir_pair in directions:
                     zero_count = 0
-                    # 检查该方向上的两个相邻格子（使用全局坐标）
                     for dr, dc in dir_pair:
-                        r_adj_global = i_global + dr
-                        c_adj_global = j_global + dc
-                        # 确保坐标在全局网格边界内
-                        if 0 <= r_adj_global < self.m and 0 <= c_adj_global < self.n:
-                            if self.result[r_adj_global][c_adj_global] == 0:
+                        r_adj_local = i_local + dr
+                        c_adj_local = j_local + dc
+                        if 0 <= r_adj_local < node_rows and 0 <= c_adj_local < node_cols:
+                            if node_grid[r_adj_local][c_adj_local] == 0:
                                 zero_count += 1
 
-                    # 如果同一行/列有两个相邻零格子，则当前点初步判定为桥梁
                     if zero_count >= 2:
-                        may_hinger = True
+                        may_be_hinger = True
                         break
 
-            # 额外检查1：如果周围邻居数少于等于1，则不是桥梁
-            # 额外检查2：如果被标记为桥梁，检查周围非零点是否全部连通
-            if may_hinger:
-                # 收集周围八个方向的非零点（摩尔邻居）
-                neighbors = []
-                for dr in [-1, 0, 1]:
-                    for dc in [-1, 0, 1]:
-                        if dr == 0 and dc == 0:
-                            continue  # 跳过自身
-                        r_adj = i_global + dr
-                        c_adj = j_global + dc
-                        if 0 <= r_adj < self.m and 0 <= c_adj < self.n:
-                            if self.result[r_adj][c_adj] > 0:
-                                neighbors.append((r_adj, c_adj))
+                # 额外检查：如果周围邻居数少于等于1，则不可能是桥梁
+                if may_be_hinger:
+                    neighbors = []
+                    for dr in [-1, 0, 1]:
+                        for dc in [-1, 0, 1]:
+                            if dr == 0 and dc == 0:
+                                continue
+                            r_adj_local = i_local + dr
+                            c_adj_local = j_local + dc
+                            if 0 <= r_adj_local < node_rows and 0 <= c_adj_local < node_cols:
+                                if node_grid[r_adj_local][c_adj_local] > 0:
+                                    neighbors.append((r_adj_local, c_adj_local))
 
-                # 检查1：如果邻居数少于等于1，则不是桥梁
-                if len(neighbors) <= 1:
-                    may_hinger = False
-                # 检查2：如果周围非零邻居数大于1，检查它们是否全部连通（四连通）
-                elif len(neighbors) > 1:
-                    visited = set()
-                    queue = collections.deque()
-                    start = neighbors[0]
-                    queue.append(start)
-                    visited.add(start)
+                    if len(neighbors) <= 1:
+                        may_be_hinger = False
 
-                    # 使用BFS检查连通性
-                    while queue:
-                        r, c = queue.popleft()
-                        # 检查四方向（上下左右）
-                        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                            nr, nc = r + dr, c + dc
-                            neighbor_pos = (nr, nc)
-                            if (neighbor_pos in neighbors and
-                                    neighbor_pos not in visited):
-                                visited.add(neighbor_pos)
-                                queue.append(neighbor_pos)
+                # 标记潜在桥梁位置（使用局部坐标）
+                if may_be_hinger:
+                    array_data[i_local][j_local] = 1
 
-                    # 如果所有邻居点都连通，则不是桥梁
-                    if len(visited) == len(neighbors):
-                        may_hinger = False
+        # 更新节点的array_data
+        node.set_grid_data(array_data)
 
-            if may_hinger:
-                # 添加到临时数组，使用全局坐标(i, j)同体系的二维数组坐标(i_global, j_global)
-                node_tinger_global_coords.append((i_global, j_global))
+        # 不返回任何值，结果已存储在节点的array_data中
 
-        # 返回当前节点的桥梁坐标数组
-        return node_tinger_global_coords
     def MCTS(self):
         pass
+def teser():
+    """
+    在几组小网格上测试 MiniMax 与 AlphaBeta 的返回分数与推荐落子。
+    注意：需要先完成 Agent.evaluate/MiniMax/AlphaBeta 内的占位符实现。
+    """
+    def show_grid(g):
+        for r in g:
+            print(" ".join(f"{v:2d}" for v in r))
+        print()
+
+    cases = [
+        # 案例1：一条带转折的连通带
+        (
+            [
+                [1, 1, 0, 0],
+                [0, 1, 1, 0],
+                [0, 0, 1, 0],
+                [0, 0, 1, 1],
+            ],
+            2, 3
+        ),
+        # 案例2：两块区域+部分2值，便于产生/消除桥
+        (
+            [
+                [2, 1, 0, 0, 1],
+                [0, 1, 1, 0, 1],
+                [0, 0, 2, 0, 1],
+                [0, 0, 1, 1, 1],
+                [0, 0, 0, 0, 1],
+            ],
+            2, 3
+        ),
+        # 案例3：更稀疏，利于观察边界优先与奇偶影响
+        (
+            [
+                [1, 0, 1, 0],
+                [0, 2, 0, 1],
+                [1, 0, 1, 0],
+                [0, 1, 0, 1],
+            ],
+            2, 3
+        ),
+    ]
+    more_cases = [
+        # 案例4：十字交叉（中心格往往是桥）
+        (
+            [
+                [0, 1, 0],
+                [1, 1, 1],
+                [0, 1, 0],
+            ],
+            2, 3
+        ),
+        # 案例5：水平走廊（1x6）
+        (
+            [
+                [1, 1, 1, 1, 1, 1],
+            ],
+            2, 3
+        ),
+        # 案例6：垂直走廊（6x1）
+        (
+            [
+                [1],
+                [1],
+                [1],
+                [1],
+                [1],
+                [1],
+            ],
+            2, 3
+        ),
+        # 案例7：环形包围，中间留孔（桥较少，边界显著）
+        (
+            [
+                [1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 1, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1],
+            ],
+            3, 4
+        ),
+        # 案例8：棋盘格（8 邻域下连通性强）
+        (
+            [
+                [1, 0, 1, 0, 1],
+                [0, 1, 0, 1, 0],
+                [1, 0, 1, 0, 1],
+                [0, 1, 0, 1, 0],
+                [1, 0, 1, 0, 1],
+            ],
+            2, 3
+        ),
+        # 案例9：两个相距较远的区域（分离岛）
+        (
+            [
+                [1, 1, 0, 0, 0, 1, 1],
+                [1, 1, 0, 0, 0, 1, 1],
+            ],
+            2, 3
+        ),
+        # 案例10：含较多的 2，测试减子对桥/安全路径的影响
+        (
+            [
+                [2, 0, 2, 0, 2],
+                [0, 2, 0, 2, 0],
+                [2, 0, 2, 0, 2],
+            ],
+            2, 3
+        ),
+        # 案例11：显式构造 may_hinger（中心左右为 0，斜对角有支撑）
+        (
+            [
+                [0, 0, 1, 0, 0],
+                [0, 1, 0, 1, 0],
+                [1, 0, 1, 0, 1],
+                [0, 1, 0, 1, 0],
+                [0, 0, 1, 0, 0],
+            ],
+            2, 3
+        ),
+        # 案例12：T 字分叉（分支选择与桥评估）
+        (
+            [
+                [0, 1, 0, 0],
+                [1, 1, 1, 0],
+                [0, 1, 0, 0],
+                [0, 1, 0, 1],
+            ],
+            2, 3
+        ),
+    ]
+
+    cases += more_cases
+    from a1_state import State as state
+    ag = Agent()
+
+    for idx, (grid, d_mm, d_ab) in enumerate(cases, 1):
+        print(f"=== Case {idx} ===")
+        print("初始网格：")
+        show_grid(grid)
+
+        st = state(grid)
+        st.Get_Graph()
+
+        # MiniMax
+        try:
+            mm_score, mm_move = ag.MiniMax(st, depth=d_mm, maximizing_player=True)
+            print(f"MiniMax(depth={d_mm}) -> score={mm_score:.3f}, move={mm_move}")
+        except Exception as e:
+            print(f"MiniMax 执行异常: {e}")
+            mm_move = None
+
+        # Alpha-Beta
+        try:
+            ab_score, ab_move = ag.AlphaBeta(st, depth=d_ab, alpha=float('-inf'), beta=float('inf'), maximizing_player=True)
+            print(f"AlphaBeta(depth={d_ab}) -> score={ab_score:.3f}, move={ab_move}")
+        except Exception as e:
+            print(f"AlphaBeta 执行异常: {e}")
+            ab_move = None
+
+        # 应用各自推荐一步并打印效果
+        def apply_and_show(move, tag):
+            if move is None:
+                return
+            try:
+                child = ag._clone_with_move(st, move)
+                print(f"{tag} 应用推荐落子 {move} 后网格：")
+                show_grid(child.result)
+            except Exception as e:
+                print(f"{tag} 应用落子异常: {e}")
+
+        apply_and_show(mm_move, "MiniMax")
+        apply_and_show(ab_move, "AlphaBeta")
+
+    print("测试完成。")
+
+
+if __name__ == "__main__":
+    # 直接运行本文件时执行测试
+    teser()
