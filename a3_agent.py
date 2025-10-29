@@ -251,21 +251,62 @@ class Agent:
                     deg += 1
         return deg
 
-    def May_Hinger(self, node=None, full_scan=False):
+    def May_Hinger(self, node=None, full_scan=False, return_new_bridge=False):
         """
+        优化后的May_Hinger方法：使用坐标列表比较替代数量比较。准确检测潜在桥梁的位置变化
+        修改后的May_Hinger方法，返回字符串"true"/"false"表示是否产生新可能桥梁
         检查潜在桥梁状态，使用局部坐标遍历，仅在需要时转换为全局坐标
         :param node: 可选，指定要检查的节点（用于增量更新）
         :param full_scan: 是否进行全量扫描（首次调用时设置为True）
+        :param return_new_bridge: 是否返回新桥标志
+        :return: 如果return_new_bridge为True，返回"true"或"false"
         """
         if full_scan:
-            # 首次调用：遍历所有节点
-            current_node = self.mylist.head
+            # 全量扫描逻辑保持不变
+            current_node = self.state.mylist.head
             while current_node is not None:
                 self._process_node_may_hinger(current_node)
                 current_node = current_node.next
+            return None
+
         elif node is not None:
-            # 增量更新：只处理指定节点
+            # 保存旧的潜在桥梁坐标列表（使用局部坐标）
+            old_array_data = node.get_array_data()
+            old_bridge_coords = set()   # 使用集合而非列表提高性能
+
+            if old_array_data:
+                for i_local in range(len(old_array_data)):
+                    for j_local in range(len(old_array_data[0])):
+                        if old_array_data[i_local][j_local] == 1:
+                            old_bridge_coords.add((i_local, j_local))
+
+            # 处理节点，更新潜在桥梁标记
             self._process_node_may_hinger(node)
+
+            # 获取新的潜在桥梁坐标列表
+            new_array_data = node.get_array_data()
+            new_bridge_coords = set()   # 使用集合而非列表提高性能
+
+            if new_array_data:
+                for i_local in range(len(new_array_data)):
+                    for j_local in range(len(new_array_data[0])):
+                        if new_array_data[i_local][j_local] == 1:
+                            new_bridge_coords.add((i_local, j_local))
+
+            # 使用集合操作检测新桥梁：检查新坐标集合中有但旧坐标集合中没有的坐标
+            new_bridges = new_bridge_coords - old_bridge_coords
+            has_new_bridge = len(new_bridges) > 0
+
+            """
+            # 可选：记录新桥梁的详细信息（用于调试）
+            if has_new_bridge and return_new_bridge:
+                print(f"检测到新潜在桥梁: {new_bridges}")
+            """
+
+            if return_new_bridge:
+                return "true" if has_new_bridge else "false"
+
+        return None
 
     def _process_node_may_hinger(self, node):
         """
@@ -288,64 +329,94 @@ class Agent:
             for j in range(node_cols):
                 array_data[i][j] = 0
 
-        # 使用局部坐标遍历节点网格
-        for i_local in range(node_rows):
-            for j_local in range(node_cols):
-                # 只检查非零单元格
-                if node_grid[i_local][j_local] == 0:
-                    continue
+            # 标记潜在桥梁（只检查计数器值为1的单元格）
+            for i_local in range(node_rows):
+                for j_local in range(node_cols):
+                    if node_grid[i_local][j_local] == 1:
+                        if self._check_potential_hinger_local(node_grid, i_local, j_local, node_rows, node_cols):
+                            array_data[i_local][j_local] = 1
 
-                # 只检查计数器值为1的单元格
-                if node_grid[i_local][j_local] != 1:
-                    continue
+            # 更新节点的array_data
+            node.set_grid_data(array_data)
 
-                # 检查直接相邻的左右和上下方向（使用局部坐标）
-                directions = [
-                    [(0, -1), (0, 1)],  # 左右方向
-                    [(-1, 0), (1, 0)]  # 上下方向
-                ]
+        def _check_potential_hinger_local(self, grid, i, j, rows, cols):
+            """
+            在局部坐标中检查单个位置是否为潜在桥梁
+            """
+            # 检查直接相邻的左右和上下方向
+            directions = [
+                [(0, -1), (0, 1)],  # 左右方向（同一行）
+                [(-1, 0), (1, 0)]  # 上下方向（同一列）
+            ]
 
-                may_be_hinger = False
-                for dir_pair in directions:
-                    zero_count = 0
-                    for dr, dc in dir_pair:
-                        r_adj_local = i_local + dr
-                        c_adj_local = j_local + dc
-                        if 0 <= r_adj_local < node_rows and 0 <= c_adj_local < node_cols:
-                            if node_grid[r_adj_local][c_adj_local] == 0:
-                                zero_count += 1
+            for dir_pair in directions:
+                zero_count = 0
+                for dr, dc in dir_pair:
+                    r_adj = i + dr
+                    c_adj = j + dc
+                    if 0 <= r_adj < rows and 0 <= c_adj < cols:
+                        if grid[r_adj][c_adj] == 0:
+                            zero_count += 1
+                if zero_count >= 2:
+                    return True
 
-                    if zero_count >= 2:
-                        may_be_hinger = True
-                        break
+            return False
 
-                # 额外检查：如果周围邻居数少于等于1，则不可能是桥梁
-                if may_be_hinger:
-                    neighbors = []
-                    for dr in [-1, 0, 1]:
-                        for dc in [-1, 0, 1]:
-                            if dr == 0 and dc == 0:
-                                continue
-                            r_adj_local = i_local + dr
-                            c_adj_local = j_local + dc
-                            if 0 <= r_adj_local < node_rows and 0 <= c_adj_local < node_cols:
-                                if node_grid[r_adj_local][c_adj_local] > 0:
-                                    neighbors.append((r_adj_local, c_adj_local))
+    def decision_tree(self, event_x: int, event_y: int, grid_row: int, grid_col: int):
+        """
+        决策树方法：处理鼠标点击事件，协调调用其他函数
+        :param event_x: 鼠标点击的像素坐标x
+        :param event_y: 鼠标点击的像素坐标y
+        :param grid_row: 点击的网格行坐标
+        :param grid_col: 点击的网格列坐标
+        :return: 无返回值，但会更新内部状态
+        """
+        print("开始决策树处理流程")
 
-                    if len(neighbors) <= 1:
-                        may_be_hinger = False
+        # 获取点击位置计数器值
+        current_value = self.state.result[grid_row][grid_col]
+        print(f"坐标({grid_row}, {grid_col})的计数器值: {current_value}")
 
-                # 标记潜在桥梁位置（使用局部坐标）
-                if may_be_hinger:
-                    array_data[i_local][j_local] = 1
+        # 决策点1: 计数器为0或>2?
+        if current_value == 0 or current_value > 2:
+            print("决策点1: 计数器为0或大于2，结束处理")
+            return
 
-        # 更新节点的array_data
-        node.set_grid_data(array_data)
+        # 决策点2: 计数器为1或2，调用change_data修改数据
+        print("决策点2: 计数器为1或2，调用change_data修改数据")
+        success = self.state.Change_Data(grid_row, grid_col)
+        if not success:
+            print("数据修改失败，结束处理")
+            return
 
-        # 不返回任何值，结果已存储在节点的array_data中
+        # 获取受影响节点
+        affected_node = self.state.Search_Node(grid_row, grid_col)
+        if affected_node is None:
+            print("警告: 未找到受影响节点，结束处理")
+            return
 
-    def decision_tree(self):
-        pass
+        print(
+            f"找到受影响节点: 范围({affected_node.get_min_x()},{affected_node.get_min_y()})到({affected_node.get_max_x()},{affected_node.get_max_y()})")
+
+        # 决策点3: 调用May_Hinger → 返回new_bridge标志
+        print("决策点3: 调用May_Hinger检查潜在桥梁")
+        new_bridge = self.May_Hinger(affected_node, return_new_bridge=True)
+        print(f"May_Hinger返回new_bridge = {new_bridge}")
+
+        # 决策点4: new_bridge为"true"?
+        if new_bridge != "true":
+            print("决策点4: new_bridge不为'true'，结束处理")
+            return
+
+        print("决策点4: new_bridge为'true'，继续处理")
+
+        # 决策点5: 调用IS_Hinger → 更新全局真桥列表
+        print("决策点5: 调用IS_Hinger判断真桥")
+        self.state.IS_Hinger(node=affected_node)
+
+        # 更新桥梁数量
+        self.state.numHingers()
+        print(f"决策树处理完成，当前桥梁数量: {self.state.hinger_count}")
 
     def MCTS(self):
         pass

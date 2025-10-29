@@ -31,7 +31,7 @@ Coord = Tuple[int, int]
 CELL = 32
 PAD  = 14
 
-ALGO_NAMES = ["A*", "BFS", "DFS", "IDDFS"]
+ALGO_NAMES = ["A*", "BFS", "DFS", "IDDFS","MiniMax", "AlphaBeta"]
 
 
 # ---------- 小工具：用 a2_path 跑路径 ----------
@@ -44,6 +44,10 @@ def run_algo(name: str, start: Coord, end: Coord) -> Optional[List[Coord]]:
         return alg.path_DFS(start, end)
     if name == "IDDFS":
         return alg.path_IDDFS(start, end)
+    if name == "MiniMax":
+        return alg.path_MiniMax(start, end)
+    if name == "AlphaBeta":
+        return alg.path_AlphaBeta(start, end)
     return None
 
 

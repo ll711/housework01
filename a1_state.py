@@ -12,6 +12,8 @@ Includes a State class for Task 1
 """
 import tkinter as tk
 import collections
+from MyList import MyList
+from a3_agent import Agent as agent
 
 # 保持对 MyList 的依赖
 
@@ -34,7 +36,7 @@ class State:
         self.true_hinger_global_coords = []  # 全局真桥全局坐标列表
         self.hinger_count = 0  # 桥梁数量
         self.first_check = True  # 是否是第一次检查
-        self.affected_nodes = set()  # 受影响的节点集合
+        self.affected_node = set()  # 受影响的节点集合
         # 新增：用于记录鼠标事件（像素与网格坐标）
         self.mouse_events = []  # [{'x': int, 'y': int, 'row': int|None, 'col': int|None}, ...]
 
@@ -53,9 +55,10 @@ class State:
         if row is not None and col is not None:
             node = self.Search_Node(row, col)
             if node is not None:
-                self.affected_nodes.add(node)
+                self.affected_node.add(node)
                 # 同时修改数据
                 self.Change_Data(row, col)
+        return None  # 如果没有提供行列信息或未找到节点，返回None
 
     def Moves(self, row: int, col: int) -> bool:
         """
@@ -82,7 +85,7 @@ class State:
 
     def Change_Data(self, row: int, col: int, node) -> bool:
         """
-        修改指定坐标位置的数字，减一操作
+        修改受影响节点的指定坐标位置的数字，减一操作
         :param row: 行坐标（全局）
         :param col: 列坐标（全局）
         :param node: 包含该坐标的节点
@@ -246,6 +249,17 @@ class State:
         :return: 对应的链表节点或 None
         每个节点代表一个活跃区域，有特定的坐标范围
         """
+
+        """
+        # 全新优化（by HaoranXiong）首先检查最近访问的节点（缓存优化）
+        if hasattr(self, 'last_accessed_node') and self.last_accessed_node:
+            min_x, max_x = self.last_accessed_node.get_min_x(), self.last_accessed_node.get_max_x()
+            min_y, max_y = self.last_accessed_node.get_min_y(), self.last_accessed_node.get_max_y()
+            if (min_y - 1 <= row <= max_y + 1) and (min_x - 1 <= col <= max_x + 1):
+                if self.result[row][col] > 0:
+                    return self.last_accessed_node
+        """
+
         current_node = self.mylist.head
         while current_node is not None:
             # 检查坐标是否在节点的活跃坐标集合中
@@ -271,23 +285,27 @@ class State:
         :return: 更新后的全局真桥坐标列表
         """
         if full_scan:
-            # 首次调用：遍历所有节点
+            # 首次调用：遍历所有节点(全量扫描)
             self.true_hinger_global_coords = []
             current_node = self.mylist.head
             while current_node is not None:
                 self._process_node_true_hingers_local(current_node)
                 current_node = current_node.next
         elif node is not None:
-            # 增量更新：只处理指定节点
+            # 增量更新：只处理指定节点，移除节点范围内的旧桥梁，添加新桥梁
             self._remove_node_hingers_from_global(node)
+            # 然后处理该节点中的新的可能的桥梁
             self._process_node_true_hingers_local(node)
 
+        # 更新桥梁数量
+        self.hinger_count = len(self.true_hinger_global_coords)
         return self.true_hinger_global_coords
 
     def _process_node_true_hingers_local(self, node):
         """
         在局部坐标空间中处理单个节点的真正桥梁判断
         所有操作使用节点局部坐标，避免任何越界检查
+        在局部坐标空间中处理真桥检测，确认后再转换全局坐标
         """
         # 获取节点边界信息（用于最后的坐标转换）
         min_x, max_x = node.get_min_x(), node.get_max_x()
@@ -334,6 +352,10 @@ class State:
         original_value = grid_copy[i_local][j_local]
         grid_copy[i_local][j_local] = 0
 
+        # 使用BFS检查连通组件数量（在局部坐标中）
+        visited = set()
+        region_count = 0
+
         # 获取节点局部网格中的所有活跃单元格
         active_cells = set()
         for i in range(node_rows):
@@ -341,14 +363,13 @@ class State:
                 if grid_copy[i][j] > 0:
                     active_cells.add((i, j))
 
+        """基本无意义
         # 如果没有活跃单元格，不会产生新区域
         if not active_cells:
             return False
+        """
 
-        # 使用BFS检查连通组件数量（在局部坐标中）
-        visited = set()
-        region_count = 0
-
+        # BFS遍历
         for cell in active_cells:
             if cell not in visited:
                 region_count += 1
