@@ -13,6 +13,7 @@ import collections
 
 from typing import List, Tuple, Optional
 from MyList import MyList as mylist
+from a1_state import State as state
 
 Coord = Tuple[int, int]
 
