@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d26566cf-fd1a-43a8-a549-82e652b8e6e8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/a1_state.py" beforeDir="false" afterPath="$PROJECT_DIR$/a1_state.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/a3_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/a3_agent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/a4_game.py" beforeDir="false" afterPath="$PROJECT_DIR$/a4_game.py" afterDir="false" />
     </list>
     <list id="4496870e-dd61-4711-bb4c-9fa6b8c5a71b" name="Changes by Administrator" comment="" />
     <list id="d19837c7-ebba-441a-a468-f289eb119283" name="lenovo 进行的更改" comment="" />
@@ -187,7 +184,7 @@
       <workItem from="1761782200545" duration="4151000" />
       <workItem from="1761826966508" duration="888000" />
       <workItem from="1761827870445" duration="13000" />
-      <workItem from="1761827892212" duration="363000" />
+      <workItem from="1761827892212" duration="790000" />
     </task>
     <servers />
   </component>
@@ -248,7 +245,7 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/housework01$a3_agent.coverage" NAME="a3_agent Coverage Results" MODIFIED="1761827915585" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/housework01$a3_agent.coverage" NAME="a3_agent Coverage Results" MODIFIED="1761828637940" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$a1_state.coverage" NAME="a1_state Coverage Results" MODIFIED="1760718360211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$.coverage" NAME=" Coverage Results" MODIFIED="1760727510098" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/housework01$Test_for_bfs.coverage" NAME="Test_for_bfs Coverage Results" MODIFIED="1760799699454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
