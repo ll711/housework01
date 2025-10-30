@@ -120,7 +120,7 @@ class State:
                 node_grid[local_row][local_col] = current_value - 1
 
                 # 同时更新全局网格数据
-                self.result[row][col] = current_value - 1
+                self.grid[row][col] = current_value - 1
 
                 print(f"坐标({row}, {col})的值从{current_value}减少到{current_value - 1}")
                 return True
