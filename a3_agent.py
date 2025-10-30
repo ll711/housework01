@@ -56,26 +56,60 @@ class Agent:
 
     def evaluate(self, st: state) -> float:
         """
-        评估函数（分数越大越好）：
-        - 鼓励“桥倾向”单元（值为1，且左右或上下两侧各至少有一个活邻）；
-        - 惩罚“可能的桥心 may_hinger”（值为1，水平或垂直两侧都为0，且8邻域活邻>=2）；
-        - 偏好边缘上的活格；
-        - 区域数越多越好（机动性）；
-        - 区域大小奇偶性轻微偏置（鼓励奇数尺寸连通块）；
-        - 剩余总和越小越接近终局，略微鼓励。
+        局面评估：
+        - 鼓励“桥倾向”(bridge_like)与区域数(regions)，鼓励边缘占位(edge_pos)
+        - 惩罚潜在桥(may_hingers)与总权重(total_sum)
+        - 对连通块大小的奇偶做轻微偏置(parity_bias)
         """
-        grid = st.grid
-        rows = len(grid)
-        cols = len(grid[0]) if rows else 0
-        if rows == 0 or cols == 0:
+        grid = getattr(st, "result", None)
+        if not grid or not grid[0]:
             return 0.0
 
-        total_sum = 0
-        edge_pos = 0
-        may_hingers = 0
-        bridge_like = 0
+        rows, cols = len(grid), len(grid[0])
+        total_sum = 0  # 所有正值之和（惩罚）
+        edge_pos = 0  # 边缘的正值格数量（奖励）
+        may_hingers = 0  # 潜在桥位置计数（惩罚）
+        bridge_like = 0  # 桥倾向位置计数（奖励）
 
-        deg8 = self._deg8
+        # 若类中实现了 _deg8 与 _count_regions8，则复用；否则在本函数内降级实现
+        def _deg8_local(g, r, c) -> int:
+            deg = 0
+            for dr in (-1, 0, 1):
+                for dc in (-1, 0, 1):
+                    if dr == 0 and dc == 0:
+                        continue
+                    nr, nc = r + dr, c + dc
+                    if 0 <= nr < rows and 0 <= nc < cols and g[nr][nc] > 0:
+                        deg += 1
+            return deg
+
+        def _regions8_local(g) -> int:
+            from collections import deque
+            vis = [[False] * cols for _ in range(rows)]
+            dirs8 = [(-1, 0), (1, 0), (0, -1), (0, 1),
+                     (-1, -1), (-1, 1), (1, -1), (1, 1)]
+            cnt = 0
+            for i in range(rows):
+                for j in range(cols):
+                    if g[i][j] > 0 and not vis[i][j]:
+                        cnt += 1
+                        q = deque([(i, j)])
+                        vis[i][j] = True
+                        while q:
+                            r, c = q.popleft()
+                            for dr, dc in dirs8:
+                                nr, nc = r + dr, c + dc
+                                if 0 <= nr < rows and 0 <= nc < cols and g[nr][nc] > 0 and not vis[nr][nc]:
+                                    vis[nr][nc] = True
+                                    q.append((nr, nc))
+            return cnt
+
+        deg8 = getattr(self, "_deg8", None)
+        if not callable(deg8):
+            deg8 = _deg8_local
+        count_regions8 = getattr(self, "_count_regions8", None)
+        if not callable(count_regions8):
+            count_regions8 = _regions8_local
 
         for r in range(rows):
             for c in range(cols):
@@ -88,7 +122,7 @@ class Agent:
                     edge_pos += 1
 
                 if v == 1:
-                    # 可能桥心：水平或垂直两侧都为0，且8邻域活邻>=2
+                    # 潜在桥（左右为0或上下为0；且八邻域度>=2）
                     lr_zeros = (1 if c - 1 >= 0 and grid[r][c - 1] == 0 else 0) + \
                                (1 if c + 1 < cols and grid[r][c + 1] == 0 else 0)
                     ud_zeros = (1 if r - 1 >= 0 and grid[r - 1][c] == 0 else 0) + \
@@ -96,7 +130,7 @@ class Agent:
                     if (lr_zeros == 2 or ud_zeros == 2) and deg8(grid, r, c) >= 2:
                         may_hingers += 1
 
-                    # 桥倾向：左右或上下方向“一步范围内”两侧各至少有一个活邻
+                    # 桥倾向：一格视野内在该方向两侧都有活邻
                     has_left = any(grid[r][cc] > 0 for cc in range(max(0, c - 1), c))
                     has_right = any(grid[r][cc] > 0 for cc in range(c + 1, min(cols, c + 2)))
                     has_up = any(grid[rr][c] > 0 for rr in range(max(0, r - 1), r))
@@ -104,10 +138,9 @@ class Agent:
                     if (has_left and has_right) or (has_up and has_down):
                         bridge_like += 1
 
-        # 连通块数量（8邻）
-        regions = self._count_regions8(grid)
+        regions = count_regions8(grid)
 
-        # 连通块大小奇偶性偏置
+        # 连通块大小奇偶性偏置（奇数+1，偶数-1）
         def component_sizes() -> list[int]:
             from collections import deque
             visited = [[False] * cols for _ in range(rows)]
@@ -125,8 +158,7 @@ class Agent:
                             size += 1
                             for dr, dc in dirs8:
                                 nr, nc = rr + dr, cc + dc
-                                if 0 <= nr < rows and 0 <= nc < cols \
-                                        and not visited[nr][nc] and grid[nr][nc] > 0:
+                                if 0 <= nr < rows and 0 <= nc < cols and not visited[nr][nc] and grid[nr][nc] > 0:
                                     visited[nr][nc] = True
                                     q.append((nr, nc))
                         sizes.append(size)
@@ -136,6 +168,7 @@ class Agent:
         for sz in component_sizes():
             parity_bias += (1 if sz % 2 == 1 else -1)
 
+        # 线性加权评分（可按需要微调权重）
         score = (
                 + 5.0 * bridge_like
                 - 3.0 * may_hingers
@@ -148,10 +181,9 @@ class Agent:
 
     def MiniMax(self, st: state, depth: int = 2, maximizing_player: bool = True) -> Tuple[float, Optional[Coord]]:
         """
-        经典极大极小搜索：
-        - 终止：depth==0 或无合法走法；
-        - 评估：evaluate；
-        - 走法：_legal_moves；展开：_clone_with_move。
+        经典极大极小：
+        - 终止：深度==0 或无合法着法
+        - 递归：遍历合法着法，分别克隆落子后递归评估
         """
         moves = self._legal_moves(st)
         if depth == 0 or not moves:
@@ -162,7 +194,7 @@ class Agent:
             best_move: Optional[Coord] = None
             for mv in moves:
                 child = self._clone_with_move(st, mv)
-                val, _ = self.MiniMax(child, depth - 1, False)
+                val, _ = self.MiniMax(child, depth - 1, maximizing_player=False)
                 if val > best_val:
                     best_val, best_move = val, mv
             return best_val, best_move
@@ -171,7 +203,7 @@ class Agent:
             best_move: Optional[Coord] = None
             for mv in moves:
                 child = self._clone_with_move(st, mv)
-                val, _ = self.MiniMax(child, depth - 1, True)
+                val, _ = self.MiniMax(child, depth - 1, maximizing_player=True)
                 if val < best_val:
                     best_val, best_move = val, mv
             return best_val, best_move
@@ -183,10 +215,9 @@ class Agent:
                   beta: float,
                   maximizing_player: bool = True) -> Tuple[float, Optional[Coord]]:
         """
-        Alpha-Beta 剪枝版 minimax：
-        - 同样的终止与评估；
-        - 使用 alpha/beta 边界剪枝；
-        - 走法同 `_legal_moves`，展开同 `_clone_with_move`。
+        Alpha-Beta 剪枝：
+        - 与 MiniMax 相同终止条件
+        - 通过 alpha/beta 界提前剪去不可能改善的分支
         """
         moves = self._legal_moves(st)
         if depth == 0 or not moves:
@@ -197,29 +228,29 @@ class Agent:
             best_move: Optional[Coord] = None
             for mv in moves:
                 child = self._clone_with_move(st, mv)
-                val, _ = self.AlphaBeta(child, depth - 1, alpha, beta, False)
+                val, _ = self.AlphaBeta(child, depth - 1, alpha, beta, maximizing_player=False)
                 if val > best_val:
                     best_val, best_move = val, mv
                 alpha = max(alpha, best_val)
                 if beta <= alpha:
-                    break
+                    break  # 剪枝
             return best_val, best_move
         else:
             best_val = float("inf")
             best_move: Optional[Coord] = None
             for mv in moves:
                 child = self._clone_with_move(st, mv)
-                val, _ = self.AlphaBeta(child, depth - 1, alpha, beta, True)
+                val, _ = self.AlphaBeta(child, depth - 1, alpha, beta, maximizing_player=True)
                 if val < best_val:
                     best_val, best_move = val, mv
                 beta = min(beta, best_val)
                 if beta <= alpha:
-                    break
+                    break  # 剪枝
             return best_val, best_move
     # ========= 辅助：生成落子、克隆走子、连通性与邻域 =========
 
     def _legal_moves(self, st: state) -> List[Coord]:
-        g = st.grid
+        g = st.result
         moves: List[Coord] = []
         for r in range(len(g)):
             for c in range(len(g[0]) if g else 0):
@@ -238,7 +269,7 @@ class Agent:
 
     def _clone_with_move(self, st: state, mv: Coord) -> state:
         r, c = mv
-        new_grid = [row[:] for row in st.grid]
+        new_grid = [row[:] for row in st.result]
         if new_grid[r][c] > 0:
             new_grid[r][c] -= 1
         child = state(new_grid)
@@ -621,7 +652,7 @@ def teser():
             try:
                 child = ag._clone_with_move(st, move)
                 print(f"{tag} 应用推荐落子 {move} 后网格：")
-                show_grid(child.grid)
+                show_grid(child.result)
             except Exception as e:
                 print(f"{tag} 应用落子异常: {e}")
 
