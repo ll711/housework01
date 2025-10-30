@@ -22,7 +22,7 @@ class State:
     def __init__(self, data):
         self.m = len(data)
         self.n = len(data[0]) if self.m > 0 else 0
-        self.result = [row[:] for row in data] # 全局网格数据
+        self.grid = [row[:] for row in data] # 全局网格数据
 
         from MyList import MyList
         self.mylist = MyList() # 储存活跃区域的链表
@@ -71,7 +71,7 @@ class State:
         """
 
         # 检查当前格内计数器数字是否为零
-        if self.result[row][col] == 0:
+        if self.grid[row][col] == 0:
             print(f"坐标({row}, {col})的值已经是零，不进行操作")
             return False
 
@@ -134,7 +134,7 @@ class State:
             return False
 
     def Get_Graph(self):
-        graph = self.result
+        graph = self.grid
         grid = [[0] * self.n for _ in range(self.m)]
         visited = [[False] * self.n for _ in range(self.m)]
 
@@ -270,7 +270,7 @@ class State:
                 min_y, max_y = current_node.get_min_y(), current_node.get_max_y()
                 if min_x <= row <= max_x and min_y <= col <= max_y:
                     # 进一步检查坐标是否确实活跃
-                    if self.result[row][col] > 0:
+                    if self.grid[row][col] > 0:
                         return current_node
             current_node = current_node.next
         return None

@@ -64,7 +64,7 @@ class Agent:
         - 区域大小奇偶性轻微偏置（鼓励奇数尺寸连通块）；
         - 剩余总和越小越接近终局，略微鼓励。
         """
-        grid = st.result
+        grid = st.grid
         rows = len(grid)
         cols = len(grid[0]) if rows else 0
         if rows == 0 or cols == 0:
@@ -219,7 +219,7 @@ class Agent:
     # ========= 辅助：生成落子、克隆走子、连通性与邻域 =========
 
     def _legal_moves(self, st: state) -> List[Coord]:
-        g = st.result
+        g = st.grid
         moves: List[Coord] = []
         for r in range(len(g)):
             for c in range(len(g[0]) if g else 0):
@@ -238,7 +238,7 @@ class Agent:
 
     def _clone_with_move(self, st: state, mv: Coord) -> state:
         r, c = mv
-        new_grid = [row[:] for row in st.result]
+        new_grid = [row[:] for row in st.grid]
         if new_grid[r][c] > 0:
             new_grid[r][c] -= 1
         child = state(new_grid)
@@ -406,7 +406,7 @@ class Agent:
         print("开始决策树处理流程")
 
         # 获取点击位置计数器值
-        current_value = self.state.result[grid_row][grid_col]
+        current_value = self.state.grid[grid_row][grid_col]
         print(f"坐标({grid_row}, {grid_col})的计数器值: {current_value}")
 
         # 决策点1: 计数器为0或>2?
