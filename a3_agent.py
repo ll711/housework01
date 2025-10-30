@@ -22,8 +22,10 @@ class Agent:
         self.name = "B20"
         self.size = "m,n"
         self.model = ["minimax", "alphabeta"]
+
     def __str__(self):
-        return self.name +self.size
+        return self.name + self.size
+
     def move(self, state: state, mode: str = "alphabeta") -> Optional[Coord]:
         grid = getattr(state, "result", None)
         if not grid:
@@ -51,6 +53,7 @@ class Agent:
         except Exception:
             # 搜索异常时回退到首个合法坐标
             return fallback_moves[0]
+
     def evaluate(self, st: state) -> float:
         """
         state = minimax模式下
@@ -108,6 +111,7 @@ class Agent:
                 - 0.1 * total_sum  # 剩余越少越接近终局
         )
         return score
+
     def MiniMax(self, st: state, depth: int = 2, maximizing_player: bool = True) -> Tuple[float, Optional[Coord]]:
         """
         建出来的树其中应该有两个孩子一个是桥一个是非桥
@@ -140,13 +144,14 @@ class Agent:
                     best_val = val
                     best_move = mv
             return best_val, best_move
+
     def AlphaBeta(self,
-        st: state,
-        depth: int,
-        alpha: float,
-        beta: float,
-        maximizing_player: bool = True
-    ) -> Tuple[float, Optional[Coord]]:
+                  st: state,
+                  depth: int,
+                  alpha: float,
+                  beta: float,
+                  maximizing_player: bool = True
+                  ) -> Tuple[float, Optional[Coord]]:
         """
         剪枝算法应该经过evaluate函数进行评估
         寻找最优路径
@@ -250,7 +255,6 @@ class Agent:
                 if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] > 0:
                     deg += 1
         return deg
-
     def May_Hinger(self, node=None, full_scan=False, return_new_bridge=False):
         """
         优化后的May_Hinger方法：使用坐标列表比较替代数量比较。准确检测潜在桥梁的位置变化
@@ -420,7 +424,6 @@ class Agent:
 
     def MCTS(self):
         pass
-
 def teser():
     """
     在几组小网格上测试 MiniMax 与 AlphaBeta 的返回分数与推荐落子。
