@@ -56,93 +56,124 @@ class Agent:
 
     def evaluate(self, st: state) -> float:
         """
-        state = minimax模式下
-        在判断出在一个区域下bridge的时候视为safe
-        反之如果为May_Higher应该视为dangerous
-        在非桥的情况下应该判断当前区域的安全路径下的奇偶数 其中边缘应该>内部
-        其中桥的定义是两个区域的链接
-        higher指的是两个区域中只有一个桥
-        优先级应该为一个区域下Higher>不会产生桥>可能产生桥>可能产生Higher
-        sate = alphabeta模式下
-        思路大体是上面的其中通过搜索将may_hinger和可能产生桥的剪掉
+        评估函数（分数越大越好）：
+        - 鼓励“桥倾向”单元（值为1，且左右或上下两侧各至少有一个活邻）；
+        - 惩罚“可能的桥心 may_hinger”（值为1，水平或垂直两侧都为0，且8邻域活邻>=2）；
+        - 偏好边缘上的活格；
+        - 区域数越多越好（机动性）；
+        - 区域大小奇偶性轻微偏置（鼓励奇数尺寸连通块）；
+        - 剩余总和越小越接近终局，略微鼓励。
         """
         grid = st.result
         rows = len(grid)
         cols = len(grid[0]) if rows else 0
+        if rows == 0 or cols == 0:
+            return 0.0
 
         total_sum = 0
         edge_pos = 0
         may_hingers = 0
         bridge_like = 0
 
+        deg8 = self._deg8
+
         for r in range(rows):
             for c in range(cols):
                 v = grid[r][c]
                 if v <= 0:
                     continue
+
                 total_sum += v
                 if r == 0 or c == 0 or r == rows - 1 or c == cols - 1:
                     edge_pos += 1
+
                 if v == 1:
-                    # 估计 may_hinger（左右两侧皆 0 或上下两侧皆 0，且 8 邻域活邻>=2）
+                    # 可能桥心：水平或垂直两侧都为0，且8邻域活邻>=2
                     lr_zeros = (1 if c - 1 >= 0 and grid[r][c - 1] == 0 else 0) + \
                                (1 if c + 1 < cols and grid[r][c + 1] == 0 else 0)
                     ud_zeros = (1 if r - 1 >= 0 and grid[r - 1][c] == 0 else 0) + \
                                (1 if r + 1 < rows and grid[r + 1][c] == 0 else 0)
-                    deg8 = self._deg8(grid, r, c)
-                    if (lr_zeros == 2 or ud_zeros == 2) and deg8 >= 2:
+                    if (lr_zeros == 2 or ud_zeros == 2) and deg8(grid, r, c) >= 2:
                         may_hingers += 1
-                    # 估计“桥倾向”：左右各至少有一个活邻，或上下各至少一个活邻
-                    has_left = any(c2 < c and grid[r][c2] > 0 for c2 in range(max(0, c - 1), c))
-                    has_right = any(c2 > c and grid[r][c2] > 0 for c2 in range(c + 1, min(cols, c + 2)))
-                    has_up = any(r2 < r and grid[r2][c] > 0 for r2 in range(max(0, r - 1), r))
-                    has_down = any(r2 > r and grid[r2][c] > 0 for r2 in range(r + 1, min(rows, r + 2)))
+
+                    # 桥倾向：左右或上下方向“一步范围内”两侧各至少有一个活邻
+                    has_left = any(grid[r][cc] > 0 for cc in range(max(0, c - 1), c))
+                    has_right = any(grid[r][cc] > 0 for cc in range(c + 1, min(cols, c + 2)))
+                    has_up = any(grid[rr][c] > 0 for rr in range(max(0, r - 1), r))
+                    has_down = any(grid[rr][c] > 0 for rr in range(r + 1, min(rows, r + 2)))
                     if (has_left and has_right) or (has_up and has_down):
                         bridge_like += 1
 
+        # 连通块数量（8邻）
         regions = self._count_regions8(grid)
 
-        # 评分加权（可按需要微调）
+        # 连通块大小奇偶性偏置
+        def component_sizes() -> list[int]:
+            from collections import deque
+            visited = [[False] * cols for _ in range(rows)]
+            dirs8 = [(-1, 0), (1, 0), (0, -1), (0, 1),
+                     (-1, -1), (-1, 1), (1, -1), (1, 1)]
+            sizes: list[int] = []
+            for i in range(rows):
+                for j in range(cols):
+                    if grid[i][j] > 0 and not visited[i][j]:
+                        q = deque([(i, j)])
+                        visited[i][j] = True
+                        size = 0
+                        while q:
+                            rr, cc = q.popleft()
+                            size += 1
+                            for dr, dc in dirs8:
+                                nr, nc = rr + dr, cc + dc
+                                if 0 <= nr < rows and 0 <= nc < cols \
+                                        and not visited[nr][nc] and grid[nr][nc] > 0:
+                                    visited[nr][nc] = True
+                                    q.append((nr, nc))
+                        sizes.append(size)
+            return sizes
+
+        parity_bias = 0
+        for sz in component_sizes():
+            parity_bias += (1 if sz % 2 == 1 else -1)
+
         score = (
-                + 5.0 * bridge_like  # 桥更安全
-                - 3.0 * may_hingers  # may_hinger 更危险
-                + 1.0 * regions  # 区域更多更有利（分裂对手、提高机动性）
-                + 0.5 * edge_pos  # 边界更优于内部
-                - 0.1 * total_sum  # 剩余越少越接近终局
+                + 5.0 * bridge_like
+                - 3.0 * may_hingers
+                + 1.0 * regions
+                + 0.5 * edge_pos
+                - 0.05 * total_sum
+                + 0.3 * parity_bias
         )
-        return score
+        return float(score)
 
     def MiniMax(self, st: state, depth: int = 2, maximizing_player: bool = True) -> Tuple[float, Optional[Coord]]:
         """
-        建出来的树其中应该有两个孩子一个是桥一个是非桥
-        在桥的情况下应该判断是否为may_bridge还是bridge
-        并以此进行评估
-        评估函数应该包含桥的数量以及桥的类型（区域中的桥）
-        在非桥的情况下应该评估当前区域安全路径的数量已经可能产生桥的路径
+        经典极大极小搜索：
+        - 终止：depth==0 或无合法走法；
+        - 评估：evaluate；
+        - 走法：_legal_moves；展开：_clone_with_move。
         """
         moves = self._legal_moves(st)
         if depth == 0 or not moves:
             return self.evaluate(st), None
 
         if maximizing_player:
-            best_val = float('-inf')
-            best_move = None
+            best_val = float("-inf")
+            best_move: Optional[Coord] = None
             for mv in moves:
                 child = self._clone_with_move(st, mv)
                 val, _ = self.MiniMax(child, depth - 1, False)
                 if val > best_val:
-                    best_val = val
-                    best_move = mv
+                    best_val, best_move = val, mv
             return best_val, best_move
         else:
-            best_val = float('inf')
-            best_move = None
+            best_val = float("inf")
+            best_move: Optional[Coord] = None
             for mv in moves:
                 child = self._clone_with_move(st, mv)
                 val, _ = self.MiniMax(child, depth - 1, True)
                 if val < best_val:
-                    best_val = val
-                    best_move = mv
+                    best_val, best_move = val, mv
             return best_val, best_move
 
     def AlphaBeta(self,
@@ -150,45 +181,42 @@ class Agent:
                   depth: int,
                   alpha: float,
                   beta: float,
-                  maximizing_player: bool = True
-                  ) -> Tuple[float, Optional[Coord]]:
+                  maximizing_player: bool = True) -> Tuple[float, Optional[Coord]]:
         """
-        剪枝算法应该经过evaluate函数进行评估
-        寻找最优路径
-        对于minmax进行剪枝
+        Alpha-Beta 剪枝版 minimax：
+        - 同样的终止与评估；
+        - 使用 alpha/beta 边界剪枝；
+        - 走法同 `_legal_moves`，展开同 `_clone_with_move`。
         """
         moves = self._legal_moves(st)
         if depth == 0 or not moves:
             return self.evaluate(st), None
 
         if maximizing_player:
-            best_val = float('-inf')
-            best_move = None
+            best_val = float("-inf")
+            best_move: Optional[Coord] = None
             for mv in moves:
                 child = self._clone_with_move(st, mv)
                 val, _ = self.AlphaBeta(child, depth - 1, alpha, beta, False)
                 if val > best_val:
-                    best_val = val
-                    best_move = mv
+                    best_val, best_move = val, mv
                 alpha = max(alpha, best_val)
                 if beta <= alpha:
-                    break  # beta 剪枝
+                    break
             return best_val, best_move
         else:
-            best_val = float('inf')
-            best_move = None
+            best_val = float("inf")
+            best_move: Optional[Coord] = None
             for mv in moves:
                 child = self._clone_with_move(st, mv)
                 val, _ = self.AlphaBeta(child, depth - 1, alpha, beta, True)
                 if val < best_val:
-                    best_val = val
-                    best_move = mv
+                    best_val, best_move = val, mv
                 beta = min(beta, best_val)
                 if beta <= alpha:
-                    break  # alpha 剪枝
+                    break
             return best_val, best_move
-
-        # ========= 辅助：生成落子、克隆走子、连通性与邻域 =========
+    # ========= 辅助：生成落子、克隆走子、连通性与邻域 =========
 
     def _legal_moves(self, st: state) -> List[Coord]:
         g = st.result
