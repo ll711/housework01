@@ -621,7 +621,7 @@ def teser():
             try:
                 child = ag._clone_with_move(st, move)
                 print(f"{tag} 应用推荐落子 {move} 后网格：")
-                show_grid(child.result)
+                show_grid(child.grid)
             except Exception as e:
                 print(f"{tag} 应用落子异常: {e}")
 
